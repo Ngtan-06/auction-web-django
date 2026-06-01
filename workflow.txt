@@ -1,0 +1,53 @@
+⚙️ Workflow cho project
+1. Khởi tạo repo
+Tạo repo trên GitHub/GitLab.
+
+Cấu trúc thư mục:
+
+Mã
+/auction-system
+  /backend
+  /frontend
+  /database
+  /docs
+  /tests
+2. Thiết kế database
+Bảng users: thông tin người dùng, vai trò (bidder, seller, admin).
+
+Bảng items: sản phẩm đấu giá.
+
+Bảng auctions: phiên đấu giá (giá khởi điểm, thời gian).
+
+Bảng bids: lịch sử đặt giá.
+
+3. Xây dựng backend
+Framework: Flask hoặc Django.
+
+API chính: đăng nhập, tạo phiên đấu giá, đặt giá thầu, kết thúc phiên.
+
+Xử lý tương tranh: transaction + lock trong database.
+
+4. Phát triển frontend
+Hiển thị sản phẩm, giá hiện tại, form đặt giá.
+
+Kết nối WebSocket để cập nhật realtime.
+
+5. Realtime communication
+Dùng Django Channels hoặc Flask-SocketIO.
+
+Khi có giá thầu mới → broadcast đến tất cả client.
+
+6. Phân quyền người dùng
+RBAC: bidder, seller, admin.
+
+Middleware kiểm tra quyền trước khi gọi API.
+
+7. Testing
+Unit test cho API.
+
+Stress test để kiểm tra khi nhiều người đặt giá cùng lúc.
+
+8. Triển khai
+Docker hóa backend/frontend.
+
+Deploy lên Heroku/AWS/Azure.
