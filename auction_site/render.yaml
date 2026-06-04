@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: auction-site
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn auction_site.wsgi"
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
