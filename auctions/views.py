@@ -1,30 +1,44 @@
 from django.shortcuts import render, redirect
-from .services import get_users, create_user, update_user, delete_user
+import supabase
+from .services import get_items, get_items_by_category
 
-def user_list(request):
-    users = get_users()
-    return render(request, "user_list.html", {"users": users})
+def home(request):
+    items = get_items_by_category()
+    return render(request, "home.html", {"items": items})
 
-def user_create(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        role = request.POST.get("role")
-        create_user(username, email, role)
-        return redirect("user_list")
-    return render(request, "user_form.html")
+def category_view(request, category_id):
+    items = get_items_by_category(category_id)
+    return render(request, "home.html", {"items": items, "category_id": category_id})
 
-def user_update(request, user_id):
-    if request.method == "POST":
-        data = {
-            "username": request.POST.get("username"),
-            "email": request.POST.get("email"),
-            "role": request.POST.get("role"),
-        }
-        update_user(user_id, data)
-        return redirect("user_list")
-    return render(request, "user_form.html")
+def item_detail(request, item_id):
+    # Lấy dữ liệu item từ Supabase
+    item = supabase.table("items").select("*").eq("id", item_id).execute().data
+    if item:
+        item = item[0]
+    else:
+        item = None
+    return render(request, "item_detail.html", {"item": item})
 
-def user_delete(request, user_id):
-    delete_user(user_id)
-    return redirect("user_list")
+def register(request):
+    return render(request, 'register.html')
+
+def loginPage(request):
+    return render(request, 'login.html')
+
+def logoutPage(request):
+    return redirect('register')
+
+def artPage(request):
+    return render(request, 'art.html')
+
+def coinPage(request):
+    return render(request, 'coin.html')
+
+def fashionPage(request):
+    return render(request, 'fashion.html')
+
+def furniturePage(request):
+    return render(request, 'furniture.html')
+
+def jewelryPage(request):
+    return render(request, 'jewelry.html')

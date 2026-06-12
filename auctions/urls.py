@@ -2,8 +2,15 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("users/", views.user_list, name="user_list"),
-    path("users/create/", views.user_create, name="user_create"),
-    path("users/<int:user_id>/update/", views.user_update, name="user_update"),
-    path("users/<int:user_id>/delete/", views.user_delete, name="user_delete"),
+    path("", views.home, name="home"),
+    path("category/<int:category_id>/", views.category_view, name="category_view"),
+    path("items/<int:item_id>/", views.item_detail, name="item_detail"),
+    path('register', views.register, name='register'),
+    path('login/', views.loginPage, name='login'),
+    path('logout', views.logoutPage, name='logout'),
+    path('art', views.artPage, name='art'),
+    path('coin', views.coinPage, name='coin'),
+    path('fashion', views.fashionPage, name='fashion'),
+    path('furniture', views.furniturePage, name='furniture'),
+    path('jewelry', views.jewelryPage, name='jewelry'),
 ]
