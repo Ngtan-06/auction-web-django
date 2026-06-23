@@ -29,12 +29,20 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+##############
 ALLOWED_HOSTS = ["*"]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+AUTH_USER_MODEL = 'auctions.User' # Thay 'myapp' bằng tên app của bạn
+
+# settings.py
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db' # Kết hợp DB và Cache
+SESSION_COOKIE_AGE = 1209600 # 2 tuần (tùy chỉnh theo yêu cầu)
+SESSION_SAVE_EVERY_REQUEST = True # Đảm bảo session được cập nhật liên tục
+
+##############
 # Application definition
 
 INSTALLED_APPS = [

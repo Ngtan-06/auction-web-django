@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
 import supabase
-from .services import get_items, get_items_by_category, create_user, authenticate_user
-from .forms import LoginForm, RegisterForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
+from django.contrib import messages
+from .services import get_items_by_category, get_items
+from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 def home(request):
-    items = get_items_by_category()
+    items = get_items()
     return render(request, "home.html", {"items": items})
 
 def category_view(request, category_id):
@@ -21,40 +22,35 @@ def item_detail(request, item_id):
         item = None
     return render(request, "item_detail.html", {"item": item})
 
-def register(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
+def register_view(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data["password1"] != form.cleaned_data["password2"]:
-                messages.error(request, "Mật khẩu không khớp.")
-            else:
-                create_user(
-                    form.cleaned_data["username"],
-                    form.cleaned_data["email"],
-                    form.cleaned_data["password1"]
-                )
-                messages.success(request, "Đăng ký thành công, hãy đăng nhập.")
-                return redirect("login")
+            form.save()
+            messages.success(request, 'Đăng ký thành công! Bạn có thể đăng nhập ngay.')
+            return redirect('login')
+        else:
+            for field in form:
+                for error in field.errors:
+                    messages.error(request, f"{field.label}: {error}")
     else:
-        form = RegisterForm()
-    return render(request, "register.html", {"form": form})
+        form = CustomUserCreationForm()
+    
+    return render(request, 'register.html', {'form': form})
 
 def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = authenticate_user(form.cleaned_data["username"], form.cleaned_data["password"])
-            if user:
-                request.session["user"] = user
-                messages.success(request, "Đăng nhập thành công.")
-                return redirect("home")
-            else:
-                messages.error(request, "Sai tên đăng nhập hoặc mật khẩu.")
+            user = form.get_user()
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, "Tên đăng nhập hoặc mật khẩu không chính xác.")
     else:
-        form = LoginForm()
-    return render(request, "login.html", {"form": form})
+        form = CustomAuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
 def logout_view(request):
-    request.session.flush()
-    messages.info(request, "Bạn đã đăng xuất.")
-    return redirect("home")
+    logout(request)
+    return redirect('login')

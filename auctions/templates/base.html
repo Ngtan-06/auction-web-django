@@ -47,10 +47,6 @@
                 <a class="login_but" href="{% url 'register' %}">Đăng ký</a>
             {% endif %}
             </div>
-            {% comment %} <div class='logout'>
-                <span>hh{{request.user}}</span>
-                <span><a href="{% url 'register' %}">Logout</a></span>
-            </div> {% endcomment %}
         </header>
 
         {% block content %}{% endblock %}

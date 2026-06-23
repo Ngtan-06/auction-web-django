@@ -1,41 +1,35 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class User(models.Model):
-    username = models.CharField(max_length=100, unique=True)
-    password_hash = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    role = models.CharField(max_length=50, default='buyer')  # buyer, seller, admin
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.username
+class User(AbstractUser):
+    ROLE_CHOICES = (('admin', 'Admin'), ('seller', 'Seller'), ('bidder', 'Bidder'))
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='bidder')
+    class Meta:
+        db_table = 'users'  # Tên bảng chính xác trong Supabase
 
 class Item(models.Model):
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='items')
+    name = models.CharField(max_length=255)
     description = models.TextField()
-    image_url = models.CharField(max_length=255)
+    image_url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
+    class Meta:
+        db_table = 'items'
 
 class Auction(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.OneToOneField(Item, on_delete=models.CASCADE)
     start_price = models.FloatField()
     current_price = models.FloatField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    status = models.CharField(max_length=50)
-
-    def __str__(self):
-        return f"Auction for {self.item.name}"
+    status = models.CharField(max_length=20, default='active')
+    class Meta:
+        db_table = 'auctions'
 
 class Bid(models.Model):
-    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name='bids')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     bid_amount = models.FloatField()
-    bid_time = models.DateTimeField()
-
-    def __str__(self):
-        return f"{self.user.username} bid {self.bid_amount}"
+    bid_time = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        db_table = 'bids'
