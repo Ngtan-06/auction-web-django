@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Chào mừng, {{ request.user.username }}!</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Thông báo mới</h3>
+            <div class="list-group">
+                {% for note in notifications %}
+                <div class="list-group-item">
+                    {{ note.message }}
+                    <small class="text-muted d-block">{{ note.created_at|timesince }} trước</small>
+                </div>
+                {% empty %}
+                <p>Không có thông báo mới.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Kết quả đấu giá của bạn</h3>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Giá thắng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in won_auctions %}
+                    <tr>
+                        <td>{{ result.auction.item.name }}</td>
+                        <td>{{ result.final_price }} VND</td>
+                        <td><a href="#" class="btn btn-sm btn-info">Xem Hóa đơn</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3">Bạn chưa thắng phiên đấu giá nào.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

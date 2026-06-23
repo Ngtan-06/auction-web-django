@@ -1,59 +1,58 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Đấu giá</title>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sàn Đấu Giá Trực Tuyến</title>
 
-        {% comment %} css {% endcomment %}
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <link rel="stylesheet" href="{%static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" width="50" height="50" alt="Logo">
+            </a>
 
-        {% comment %} javascript {% endcomment %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script rel="stylesheet" href="{%static 'javascript/clock.js' %}"></script>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" 
-            href="{% static 'css/style.css' %}">
-    </head>
-    <body>
-        <header class="header">
-            <div class ="logo">
-                <img src="{% static "images/logo.png" %}" width=80px, height=80px>
-            </div>
-
-            <nav>
-                <a href="{% url 'category_view' 1 %}">Tranh nghệ thuật</a>
+            <nav class="navbar-nav me-auto">
                 <a href="{%url 'category_view' 2 %}">Trang sức</a>
                 <a href="{%url 'category_view' 3 %}">Ngoại thất</a>
                 <a href="{%url 'category_view' 4 %}">Đồng xu</a>
                 <a href="{%url 'category_view' 5 %}">Thời trang</a>
             </nav>
 
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                <button class="btn btn-outline-success" type="submit">Search</button>
+            <form class="d-flex me-3" role="search">
+                <input class="form-control me-2" type="search" placeholder="Tìm kiếm...">
+                <button class="btn btn-outline-success" type="submit">Tìm</button>
             </form>
 
-            <div class='clock'><span id="clock"></span></div>
-            <div class='login'>
-            {% if request.session.user %}
-                <span>Xin chào, {{ request.session.user.username }}</span>
-                <a href="{% url 'logout' %}">Đăng xuất</a>
-            {% else %}
-                <a class="login_but" href="{% url 'login' %}">Đăng nhập</a>
-                <a class="login_but" href="{% url 'register' %}">Đăng ký</a>
-            {% endif %}
+            <div class="d-flex align-items-center">
+                <div class="me-3" id="clock"></div>
+                
+                {% if user.is_authenticated %}
+                    <span class="me-2">Xin chào, <strong>{{ user.username }}</strong></span>
+                    <a href="{% url 'dashboard' %}" class="btn btn-sm btn-info me-2">Dashboard</a>
+                    <a href="{% url 'logout' %}" class="btn btn-sm btn-danger">Đăng xuất</a>
+                {% else %}
+                    <a class="btn btn-outline-primary btn-sm me-2" href="{% url 'login' %}">Đăng nhập</a>
+                    <a class="btn btn-primary btn-sm" href="{% url 'register' %}">Đăng ký</a>
+                {% endif %}
             </div>
-        </header>
+        </div>
+    </header>
 
+    <main class="container">
         {% block content %}{% endblock %}
-        {% block Register %}{% endblock Register %}
-        <script src="" async defer></script>
-    </body>
-    <footer class="container--fluid bg-success text-center fixed-bottom p-2 mt-5">
+        {% block Register %}{% endblock %}
+    </main>
+
+    <footer class="text-center p-3 mt-5 border-top">
+        <p>&copy; 2026 Hệ thống Đấu giá Trực tuyến</p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'javascript/clock.js' %}"></script>
+</body>
 </html>
-    

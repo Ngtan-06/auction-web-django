@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <img src="{{ auction.item.image_url }}" class="img-fluid rounded" alt="{{ auction.item.name }}">
+    </div>
+    <div class="col-md-6">
+        <h1>{{ auction.item.name }}</h1>
+        <p>{{ auction.item.description }}</p>
+        <h3 class="text-primary">Giá hiện tại: {{ auction.current_price }} VND</h3>
+        
+        {% if auction.status == 'active' %}
+            <form method="POST" action="{% url 'place_bid' auction.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Đặt giá {{ auction.current_price|add:auction.bid_increment }} VND</button>
+            </form>
+        {% else %}
+            <div class="alert alert-warning">
+                Phiên đấu giá đã kết thúc. 
+                {% if auction.result.winner == request.user %}
+                    <strong>Chúc mừng! Bạn đã thắng phiên này.</strong>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<hr>
+
+<h3>Lịch sử đặt giá</h3>
+<ul class="list-group">
+    {% for bid in bids %}
+    <li class="list-group-item">
+        {{ bid.user.username }} đã đặt: <strong>{{ bid.bid_amount }} VND</strong> 
+        <small class="text-muted">lúc {{ bid.bid_time|date:"H:i:s d/m" }}</small>
+    </li>
+    {% empty %}
+    <li class="list-group-item">Chưa có ai đặt giá.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

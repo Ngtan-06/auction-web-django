@@ -42,6 +42,18 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db' # Kết hợp DB v
 SESSION_COOKIE_AGE = 1209600 # 2 tuần (tùy chỉnh theo yêu cầu)
 SESSION_SAVE_EVERY_REQUEST = True # Đảm bảo session được cập nhật liên tục
 
+# settings.py
+
+# 1. Đặt múi giờ hiển thị mặc định là Việt Nam
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
+
+# 2. BẮT BUỘC để True: Django sẽ lưu vào DB dưới dạng UTC 
+# nhưng khi lấy ra sẽ tự chuyển về Asia/Ho_Chi_Minh cho bạn
+USE_TZ = True 
+
+# 3. Đảm bảo ngôn ngữ hiển thị đúng định dạng Việt Nam
+LANGUAGE_CODE = 'vi'
+
 ##############
 # Application definition
 
