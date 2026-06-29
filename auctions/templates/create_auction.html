@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Đăng sản phẩm đấu giá</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Thông tin sản phẩm</h4>
+                {{ item_form.as_p }}
+            </div>
+            <div class="col-md-6">
+                <h4>Cấu hình đấu giá</h4>
+                {{ auction_form.as_p }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Xác nhận đăng</button>
+    </form>
+</div>
+{% endblock %}

@@ -23,6 +23,7 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     image_url = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='items/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

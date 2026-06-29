@@ -1,4 +1,5 @@
 import supabase
+from django.db import transaction
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
@@ -55,20 +56,21 @@ def logout_view(request):
 @role_required(['seller'])
 def create_auction_view(request):
     if request.method == 'POST':
-        item_form = ItemForm(request.POST)
+        item_form = ItemForm(request.POST, request.FILES)
         auction_form = AuctionCreateForm(request.POST)
         if item_form.is_valid() and auction_form.is_valid():
-            # Lưu item
-            item = item_form.save(commit=False)
-            item.seller = request.user
-            item.save()
-            
-            # Lưu auction
-            auction = auction_form.save(commit=False)
-            auction.item = item
-            auction.current_price = auction.start_price
-            auction.status = 'active'
-            auction.save()
+            with transaction.atomic():
+                # Lưu item
+                item = item_form.save(commit=False)
+                item.seller = request.user
+                item.save()
+                
+                # Lưu auction
+                auction = auction_form.save(commit=False)
+                auction.item = item
+                auction.current_price = auction.start_price
+                auction.status = 'active' if auction.start_time <= timezone.now() else 'pending'
+                auction.save()
             return redirect('dashboard') # Đảm bảo bạn đã có url 'dashboard'
     else:
         item_form = ItemForm()
