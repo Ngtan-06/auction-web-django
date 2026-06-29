@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% if auctions %}
 <h2 class="mb-4">Các phiên đấu giá đang diễn ra</h2>
 <div class="row">
     {% for auction in auctions %}
@@ -24,6 +25,24 @@
     </div>
     {% empty %}
     <p>Hiện chưa có phiên đấu giá nào đang diễn ra.</p>
+    {% endfor %}
+</div>
+{% endif %}
+<h2 class="mb-4">Sắp đấu giá</h2>
+<div class="row">
+    {% for auction in upcoming_auctions %}
+    <div class="col-md-4 col-lg-3">
+        <div class="card mb-4 shadow-sm bg-light">
+            <img src="{{ auction.item.image_url }}" class="card-img-top" alt="{{ auction.item.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ auction.item.name }}</h5>
+                <p class="text-secondary small">Bắt đầu lúc: {{ auction.start_time|date:"d/m H:i" }}</p>
+                <button class="btn btn-secondary w-100" disabled>Đang chờ</button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">Chưa có sản phẩm nào sắp đấu giá.</p>
     {% endfor %}
 </div>
 {% endblock %}

@@ -5,13 +5,9 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
-from .services import get_items_by_category, place_bid, finalize_auction
+from .services import place_bid, finalize_auction
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, AuctionCreateForm, ItemForm
 from .models import Auction, Notification, AuctionResult
-
-def category_view(request, category_id):
-    items = get_items_by_category(category_id)
-    return render(request, "home.html", {"items": items, "category_id": category_id})
 
 def item_detail(request, item_id):
     # Lấy dữ liệu item từ Supabase
@@ -86,7 +82,10 @@ def create_auction_view(request):
 def home_view(request):
     # Lấy tất cả các phiên đấu giá đang diễn ra
     auctions = Auction.objects.filter(status='active').select_related('item')
-    return render(request, 'home.html', {'auctions': auctions})
+
+    # Các phiên sắp tới (Pending hoặc đã tạo nhưng chưa đến giờ)
+    upcoming_auctions = Auction.objects.filter(start_time__gt=timezone.now())
+    return render(request, 'home.html', {'auctions': auctions, 'upcoming_auctions': upcoming_auctions})
 
 def auction_detail_view(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)

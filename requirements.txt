@@ -4,3 +4,5 @@ supabase
 python-dotenv
 psycopg2-binary
 dj-database-url
+channels
+daphne

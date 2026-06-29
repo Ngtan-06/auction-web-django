@@ -8,13 +8,17 @@
     <div class="col-md-6">
         <h1>{{ auction.item.name }}</h1>
         <p>{{ auction.item.description }}</p>
-        <h3 class="text-primary">Giá hiện tại: {{ auction.current_price }} VND</h3>
+        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price }}</span> VND</h3>
         
         {% if auction.status == 'active' %}
-            <form method="POST" action="{% url 'place_bid' auction.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-success">Đặt giá {{ auction.current_price|add:auction.bid_increment }} VND</button>
-            </form>
+            <div id="bid-form-container">
+                <form method="POST" action="{% url 'place_bid' auction.id %}">
+                    {% csrf_token %}
+                    <button id="bid-button" type="submit" class="btn btn-success">
+                        Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment }}</span> VND
+                    </button>
+                </form>
+            </div>
         {% else %}
             <div class="alert alert-warning">
                 Phiên đấu giá đã kết thúc. 
@@ -31,12 +35,24 @@
 <h3>Lịch sử đặt giá</h3>
 <ul class="list-group">
     {% for bid in bids %}
-    <li class="list-group-item">
-        {{ bid.user.username }} đã đặt: <strong>{{ bid.bid_amount }} VND</strong> 
-        <small class="text-muted">lúc {{ bid.bid_time|date:"H:i:s d/m" }}</small>
-    </li>
+        <li class="list-group-item">
+            {{ bid.user.username }} đã đặt: <strong>{{ bid.bid_amount }} VND</strong> 
+            <small class="text-muted">lúc {{ bid.bid_time|date:"H:i:s d/m" }}</small>
+        </li>
     {% empty %}
-    <li class="list-group-item">Chưa có ai đặt giá.</li>
+        <li class="list-group-item">Chưa có ai đặt giá.</li>
     {% endfor %}
 </ul>
+<script>
+    const auctionId = "{{ auction.id }}";
+    const socket = new WebSocket('ws://' + window.location.host + '/ws/auction/' + auctionId + '/');
+
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        // Cập nhật giá hiện tại
+        document.getElementById('price-display').innerText = data.current_price;
+        // Cập nhật số tiền trên nút đặt giá
+        document.getElementById('next-price-display').innerText = data.next_bid;
+    };
+</script>
 {% endblock %}

@@ -58,6 +58,7 @@ LANGUAGE_CODE = 'vi'
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'auctions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -66,6 +67,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+ASGI_APPLICATION = 'auction_site.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,14 +110,11 @@ WSGI_APPLICATION = 'auction_site.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'postgres',
-            'USER': os.getenv('SUPABASE_USER'),
-            'PASSWORD': os.getenv('SUPABASE_PASSWORD'),
-            'HOST': os.getenv('SUPABASE_HOST'),
-            'PORT': os.getenv('SUPABASE_PORT'),
-        }
+    'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True  # Quan trọng: Render yêu cầu kết nối SSL
+        )
 }
 
 
@@ -146,4 +152,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]

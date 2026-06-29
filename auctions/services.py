@@ -1,39 +1,28 @@
-from .supabase_client import supabase
 from django.contrib.auth.hashers import make_password
 from decimal import Decimal
 from .models import Bid, Notification, AuctionResult
-
-# Lấy danh sách sản phẩm từ bảng items
-def get_items():
-    return supabase.table("items").select("*").execute().data
-
-def get_items_by_category(category_id=None):
-    query = supabase.table("items").select("*")
-    if category_id:
-        query = query.eq("category_id", category_id)
-    return query.execute().data
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 def calculate_next_bid(auction):
     # Giá tiếp theo = Giá hiện tại + Bước giá
     return auction.current_price + auction.bid_increment
 
 def place_bid(user, auction):
-    # 1. Tính giá tiếp theo
-    next_bid = calculate_next_bid(auction)
-    
-    # 2. Tạo record Bid
-    bid = Bid.objects.create(
-        auction=auction,
-        user=user,
-        bid_amount=next_bid
-    )
-    
-    # 3. Cập nhật giá hiện tại của phiên
+    next_bid = auction.current_price + auction.bid_increment
+    # ... lưu Bid ...
     auction.current_price = next_bid
     auction.save()
-    return bid
+    next_price = next_bid + auction.bid_increment
+    # Kích hoạt WebSocket gửi giá mới cho mọi người
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'auction_{auction.id}',
+        {'type': 'send_new_bid',
+         'current_price': str(next_bid),
+         'next_bid': str(next_price)}
+    )
 
-# services.py
 def finalize_auction(auction):
     # 1. Tìm người đặt giá cao nhất
     highest_bid = auction.bids.order_by('-bid_amount').first()
