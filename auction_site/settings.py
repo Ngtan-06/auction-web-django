@@ -91,7 +91,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Đường dẫn tới thư mục chứa các file tĩnh khi đã gom lại (collectstatic)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Quan trọng: Cấu hình để Whitenoise phục vụ file tĩnh
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'auction_site.urls'
