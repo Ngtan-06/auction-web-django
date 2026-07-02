@@ -14,4 +14,6 @@ class AuctionConsumer(AsyncWebsocketConsumer):
 
     # Gửi giá mới tới tất cả người dùng trong group
     async def send_new_bid(self, event):
-        await self.send(text_data=json.dumps({'current_price': event['current_price'],'next_bid': event['next_bid']}))
+        await self.send(text_data=json.dumps({'current_price': event['current_price'],
+                                              'next_bid': event['next_bid'],
+                                              'bid_html': event['bid_html']}))

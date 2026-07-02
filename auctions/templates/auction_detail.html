@@ -33,28 +33,32 @@
 <hr>
 
 <h3>Lịch sử đặt giá</h3>
-<ul class="list-group">
+<ul id="bid-history" class="list-group">
     {% for bid in bids %}
-        <li class="list-group-item">
-            {{ bid.user.username }} đã đặt: <strong>{{ bid.bid_amount }} VND</strong> 
-            <small class="text-muted">lúc {{ bid.bid_time|date:"H:i:s d/m" }}</small>
-        </li>
+        {% include 'partials/bid_item.html' %}
     {% empty %}
-        <li class="list-group-item">Chưa có ai đặt giá.</li>
+        <li class="list-group-item empty-msg">Chưa có ai đặt giá.</li>
     {% endfor %}
 </ul>
 <script>
     const auctionId = "{{ auction.id }}";
     const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
     const domain = window.location.host;
-    const chatSocket = new WebSocket(protocol + domain + '/ws/auction/' + auctionId + '/');
+    const Socket = new WebSocket(protocol + domain + '/ws/auction/' + auctionId + '/');
 
-    chatSocket.onmessage = function(e) {
+    Socket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         // Cập nhật giá hiện tại
         document.getElementById('price-display').innerText = data.current_price;
         // Cập nhật số tiền trên nút đặt giá
         document.getElementById('next-price-display').innerText = data.next_bid;
-    };
+
+        const bidHistory = document.getElementById('bid-history');
+        bidHistory.insertAdjacentHTML('afterbegin', data.bid_html);
+        
+        // Nếu trước đó đang là "Chưa có ai đặt giá", hãy xóa nó đi
+        const emptyMsg = bidHistory.querySelector('.empty-msg');
+        if (emptyMsg) emptyMsg.remove();
+        };
 </script>
 {% endblock %}
