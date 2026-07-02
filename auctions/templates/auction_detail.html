@@ -12,7 +12,7 @@
         
         {% if auction.status == 'active' %}
             <div id="bid-form-container">
-                <form id="bid-form" method="POST" action="{% url 'place_bid_view' auction.id %}">
+                <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}">
                     {% csrf_token %}
                     <button type="submit" id="bid-button" class="btn btn-primary" 
                             {% if auction.current_bidder == user %}disabled{% endif %}>

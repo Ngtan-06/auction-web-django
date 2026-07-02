@@ -1,5 +1,4 @@
 from django.utils import timezone
-from django.contrib.auth.hashers import make_password
 from django.template.loader import render_to_string
 from .models import Bid, Notification, AuctionResult
 from channels.layers import get_channel_layer
