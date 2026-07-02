@@ -1,5 +1,5 @@
+from time import timezone
 from django.contrib.auth.hashers import make_password
-from decimal import Decimal
 from .models import Bid, Notification, AuctionResult
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -9,8 +9,16 @@ def calculate_next_bid(auction):
     return auction.current_price + auction.bid_increment
 
 def place_bid(user, auction):
+    if timezone.now() > auction.end_time:
+        return False # Trả về False nếu hết giờ
     next_bid = auction.current_price + auction.bid_increment
     # ... lưu Bid ...
+    Bid.objects.create(
+        user=user,
+        auction=auction,
+        bid_amount=next_bid,
+        bid_time=timezone.now()
+    )
     auction.current_price = next_bid
     auction.save()
     next_price = next_bid + auction.bid_increment
@@ -22,6 +30,7 @@ def place_bid(user, auction):
          'current_price': str(next_bid),
          'next_bid': str(next_price)}
     )
+    return True # Trả về True nếu thành công
 
 def finalize_auction(auction):
     # 1. Tìm người đặt giá cao nhất
