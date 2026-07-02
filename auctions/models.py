@@ -40,6 +40,7 @@ class Auction(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     status = models.CharField(max_length=20, default='pending') # pending, active, ended
+    current_bidder = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='auctions_winning')
 
     class Meta:
         db_table = 'auctions'

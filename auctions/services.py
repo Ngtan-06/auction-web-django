@@ -8,7 +8,7 @@ from asgiref.sync import async_to_sync
 
 def place_bid(user, auction):
     next_bid = auction.current_price + auction.bid_increment
-    
+
     # 1. Lưu vào Database
     new_bid = Bid.objects.create(
         user=user,
@@ -19,6 +19,7 @@ def place_bid(user, auction):
     
     # 2. Cập nhật Auction
     auction.current_price = next_bid
+    auction.current_bidder = user
     auction.save()
     
     # 3. Render đoạn HTML cho dòng lịch sử mới

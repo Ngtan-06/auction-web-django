@@ -14,9 +14,18 @@
             <div id="bid-form-container">
                 <form method="POST" action="{% url 'place_bid' auction.id %}">
                     {% csrf_token %}
-                    <button id="bid-button" type="submit" class="btn btn-success">
-                        Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment }}</span> VND
-                    </button>
+                    
+                    {% if auction.current_bidder == user %}
+                        <!-- Nếu user là người đang giữ giá -->
+                        <button type="submit" class="btn btn-secondary" disabled>
+                            Bạn đang giữ giá cao nhất
+                        </button>
+                    {% else %}
+                        <!-- Nếu không phải, cho phép bấm -->
+                        <button type="submit" class="btn btn-primary">
+                            Đặt giá {{ auction.current_price|add:auction.bid_increment }} VND
+                        </button>
+                    {% endif %}
                 </form>
             </div>
         {% else %}
