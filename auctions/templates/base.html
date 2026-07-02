@@ -29,8 +29,6 @@
             </form>
 
             <div class="d-flex align-items-center">
-                <div class="me-3" id="clock"></div>
-                
                 {% if user.is_authenticated %}
                     <span class="me-2">Xin chào, <strong>{{ user.username }}</strong></span>
                     {% if user.is_authenticated and user.role == 'seller' %}

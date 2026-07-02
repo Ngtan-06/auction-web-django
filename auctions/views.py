@@ -71,7 +71,7 @@ def create_auction_view(request):
                 auction.current_price = auction.start_price
                 auction.status = 'active' if auction.start_time <= timezone.now() else 'pending'
                 auction.save()
-            return redirect('dashboard') # Đảm bảo bạn đã có url 'dashboard'
+            return redirect('home')
     else:
         item_form = ItemForm()
         auction_form = AuctionCreateForm()

@@ -5,9 +5,6 @@ from .models import Bid, Notification, AuctionResult
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-def calculate_next_bid(auction):
-    # Giá tiếp theo = Giá hiện tại + Bước giá
-    return auction.current_price + auction.bid_increment
 
 def place_bid(user, auction):
     next_bid = auction.current_price + auction.bid_increment
