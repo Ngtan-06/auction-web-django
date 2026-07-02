@@ -8,3 +8,4 @@ channels
 daphne
 Pillow
 whitenoise
+channels_redis

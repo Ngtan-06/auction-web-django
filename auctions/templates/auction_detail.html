@@ -45,9 +45,11 @@
 </ul>
 <script>
     const auctionId = "{{ auction.id }}";
-    const socket = new WebSocket('ws://' + window.location.host + '/ws/auction/' + auctionId + '/');
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const domain = window.location.host;
+    const chatSocket = new WebSocket(protocol + domain + '/ws/auction/' + auctionId + '/');
 
-    socket.onmessage = function(e) {
+    chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         // Cập nhật giá hiện tại
         document.getElementById('price-display').innerText = data.current_price;
