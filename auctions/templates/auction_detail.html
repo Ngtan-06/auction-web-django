@@ -12,20 +12,12 @@
         
         {% if auction.status == 'active' %}
             <div id="bid-form-container">
-                <form method="POST" action="{% url 'place_bid' auction.id %}">
+                <form id="bid-form" method="POST" action="{% url 'place_bid_view' auction.id %}">
                     {% csrf_token %}
-                    
-                    {% if auction.current_bidder == user %}
-                        <!-- Nếu user là người đang giữ giá -->
-                        <button type="submit" class="btn btn-secondary" disabled>
-                            Bạn đang giữ giá cao nhất
-                        </button>
-                    {% else %}
-                        <!-- Nếu không phải, cho phép bấm -->
-                        <button type="submit" class="btn btn-primary">
-                            Đặt giá {{ auction.current_price|add:auction.bid_increment }} VND
-                        </button>
-                    {% endif %}
+                    <button type="submit" id="bid-button" class="btn btn-primary" 
+                            {% if auction.current_bidder == user %}disabled{% endif %}>
+                        Đặt giá <span id="next-price-display">{{ next_bid }}</span>
+                    </button>
                 </form>
             </div>
         {% else %}
@@ -50,24 +42,29 @@
     {% endfor %}
 </ul>
 <script>
-    const auctionId = "{{ auction.id }}";
-    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const domain = window.location.host;
-    const Socket = new WebSocket(protocol + domain + '/ws/auction/' + auctionId + '/');
-
     Socket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        // Cập nhật giá hiện tại
+        const bidButton = document.getElementById('bid-button');
+        const myUserId = {{ user.id }}; // Lấy ID của người đang xem trang
+
+        // 1. Cập nhật giá
         document.getElementById('price-display').innerText = data.current_price;
-        // Cập nhật số tiền trên nút đặt giá
         document.getElementById('next-price-display').innerText = data.next_bid;
 
+        // 2. Cập nhật lịch sử
         const bidHistory = document.getElementById('bid-history');
         bidHistory.insertAdjacentHTML('afterbegin', data.bid_html);
-        
-        // Nếu trước đó đang là "Chưa có ai đặt giá", hãy xóa nó đi
         const emptyMsg = bidHistory.querySelector('.empty-msg');
         if (emptyMsg) emptyMsg.remove();
-        };
+
+        // 3. Logic nút bấm
+        if (parseInt(data.bidder_id) === myUserId) {
+            bidButton.disabled = true;
+            bidButton.innerText = "Bạn đang giữ giá cao nhất";
+        } else {
+            bidButton.disabled = false;
+            bidButton.innerHTML = 'Đặt giá <span id="next-price-display">' + data.next_bid + '</span>';
+        }
+    };
 </script>
 {% endblock %}

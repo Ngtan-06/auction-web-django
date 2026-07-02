@@ -34,7 +34,8 @@ def place_bid(user, auction):
             'type': 'send_new_bid',
             'current_price': str(next_bid),
             'next_bid': str(next_bid + auction.bid_increment),
-            'bid_html': bid_html # Gửi đoạn HTML mới
+            'bid_html': bid_html, # Gửi đoạn HTML mới
+            'bidder_id': user.id # Gửi ID của người đặt giá
         }
     )
 

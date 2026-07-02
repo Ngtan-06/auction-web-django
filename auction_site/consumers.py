@@ -16,4 +16,5 @@ class AuctionConsumer(AsyncWebsocketConsumer):
     async def send_new_bid(self, event):
         await self.send(text_data=json.dumps({'current_price': event['current_price'],
                                               'next_bid': event['next_bid'],
-                                              'bid_html': event['bid_html']}))
+                                              'bid_html': event['bid_html'],
+                                              'bidder_id': event.get('bidder_id'),}))

@@ -106,20 +106,19 @@ def auction_detail_view(request, auction_id):
 
 @login_required
 def place_bid_view(request, auction_id):
-    if request.method == 'POST':
-        auction = get_object_or_404(Auction, id=auction_id)
-        
-        # Kiểm tra thời gian
-        from django.utils import timezone
-        if timezone.now() > auction.end_time:
-            messages.error(request, "Phiên đấu giá đã kết thúc!")
-            return redirect('auction_detail', auction_id=auction.id)
-
-        # Đặt giá theo bước giá
-        place_bid(request.user, auction)
-        messages.success(request, "Đặt giá thành công!")
-        
+    auction = get_object_or_404(Auction, id=auction_id)
+    
+    # Chặn nếu user đã là người đặt giá cao nhất
+    if auction.current_bidder == request.user:
+        messages.error(request, "Bạn đang giữ giá cao nhất!")
         return redirect('auction_detail', auction_id=auction.id)
+        
+    if timezone.now() > auction.end_time:
+        messages.error(request, "Phiên đấu giá đã kết thúc!")
+        return redirect('auction_detail', auction_id=auction.id)
+
+    place_bid(request.user, auction)
+    return redirect('auction_detail', auction_id=auction.id)
     
 @login_required
 def dashboard_view(request):
