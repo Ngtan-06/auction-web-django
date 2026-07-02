@@ -170,3 +170,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://auction-web-django-4.onrender.com',
+    'https://*.onrender.com', # Cho phép tất cả các subdomain của render nếu cần
+]
