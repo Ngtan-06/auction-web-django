@@ -57,6 +57,7 @@
 
         // Cập nhật giá hiển thị (dùng parseInt để bỏ .00)
         if (priceDisplay) priceDisplay.innerText = parseInt(data.current_price);
+        if (nextPriceDisplay) nextPriceDisplay.innerText = parseInt(data.next_bid);
 
         // Cập nhật lịch sử
         const bidHistory = document.getElementById('bid-history');
@@ -68,7 +69,7 @@
 
         // Logic nút bấm
         if (bidButton) {
-            if (stringformat(data.bidder_id) === stringformat(myUserId)) {
+            if (parseInt(data.bidder_id) === parseInt(myUserId)) {
                 bidButton.disabled = true;
                 bidButton.innerText = "Bạn đang giữ giá cao nhất";
             } else {
