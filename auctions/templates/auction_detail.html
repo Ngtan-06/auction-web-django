@@ -8,7 +8,7 @@
     <div class="col-md-6">
         <h1>{{ auction.item.name }}</h1>
         <p>{{ auction.item.description }}</p>
-        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price }}</span> VND</h3>
+        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price| floatformat:0 }}</span> VND</h3>
         
         {% if auction.status == 'active' %}
             <div id="bid-form-container">
@@ -16,7 +16,7 @@
                     {% csrf_token %}
                     <button type="submit" id="bid-button" class="btn btn-primary" 
                             {% if auction.current_bidder == user %}disabled{% endif %}>
-                        Đặt giá <span id="next-price-display">{{ next_bid }}</span>
+                        Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment|floatformat:0 }}</span> VND
                     </button>
                 </form>
             </div>

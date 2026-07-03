@@ -1,5 +1,5 @@
-import supabase
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
@@ -8,16 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import role_required
 from .services import place_bid, finalize_auction
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, AuctionCreateForm, ItemForm
-from .models import Auction, Notification, AuctionResult
-
-def item_detail(request, item_id):
-    # Lấy dữ liệu item từ Supabase
-    item = supabase.table("items").select("*").eq("id", item_id).execute().data
-    if item:
-        item = item[0]
-    else:
-        item = None
-    return render(request, "item_detail.html", {"item": item})
+from .models import Auction, Category, Notification, AuctionResult
 
 def register_view(request):
     if request.method == 'POST':
@@ -82,12 +73,23 @@ def create_auction_view(request):
     })
 
 def home_view(request):
+    categories = Category.objects.all()
     # Lấy tất cả các phiên đấu giá đang diễn ra
-    auctions = Auction.objects.filter(status='active').select_related('item')
-
+    auctions = Auction.objects.filter(status='active')
+    # Lọc theo từ khóa (tìm trong tên item)
+    query = request.GET.get('q')
+    if query:
+        auctions = auctions.filter(item__name__icontains=query)
+        
+    # Lọc theo danh mục
+    category_id = request.GET.get('category')
+    if category_id:
+        auctions = auctions.filter(item__category__id=category_id)
     # Các phiên sắp tới (Pending hoặc đã tạo nhưng chưa đến giờ)
     upcoming_auctions = Auction.objects.filter(start_time__gt=timezone.now())
-    return render(request, 'home.html', {'auctions': auctions, 'upcoming_auctions': upcoming_auctions})
+    return render(request, 'home.html', {'auctions': auctions,
+                                          'upcoming_auctions': upcoming_auctions,
+                                          'categories': categories})
 
 def auction_detail_view(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)

@@ -17,14 +17,13 @@
             </a>
 
             <nav class="navbar-nav me-auto">
-                <a href="#">Trang sức</a>
-                <a href="#">Ngoại thất</a>
-                <a href="#">Đồng xu</a>
-                <a href="#">Thời trang</a>
+                {% for cat in categories %}
+                    <a class="nav-link" href="{% url 'home' %}?category={{ cat.id }}">{{ cat.name }}</a>
+                {% endfor %}
             </nav>
 
-            <form class="d-flex me-3" role="search">
-                <input class="form-control me-2" type="search" placeholder="Tìm kiếm...">
+            <form class="d-flex me-3" role="search" action="{% url 'home' %}" method="GET">
+                <input class="form-control me-2" type="search" name="q" placeholder="Tìm kiếm sản phẩm..." value="{{ request.GET.q }}">
                 <button class="btn btn-outline-success" type="submit">Tìm</button>
             </form>
 
