@@ -55,19 +55,12 @@
         const nextPriceDisplay = document.getElementById('next-price-display');
         const myUserId = {{ user.id }};
 
+        console.log("Dữ liệu nhận từ Socket:", data);
+        console.log("So sánh:", parseInt(data.bidder_id), "===", myUserId);
         // Cập nhật giá hiển thị (dùng parseInt để bỏ .00)
         if (priceDisplay) priceDisplay.innerText = parseInt(data.current_price);
         if (nextPriceDisplay) nextPriceDisplay.innerText = parseInt(data.next_bid);
 
-        // Cập nhật lịch sử
-        const bidHistory = document.getElementById('bid-history');
-        if (bidHistory) {
-            bidHistory.insertAdjacentHTML('afterbegin', data.bid_html);
-            const emptyMsg = bidHistory.querySelector('.empty-msg');
-            if (emptyMsg) emptyMsg.remove();
-        }
-
-        // Logic nút bấm
         if (bidButton) {
             if (parseInt(data.bidder_id) === parseInt(myUserId)) {
                 bidButton.disabled = true;
@@ -76,6 +69,13 @@
                 bidButton.disabled = false;
                 bidButton.innerHTML = 'Đặt giá <span id="next-price-display">' + parseInt(data.next_bid) + '</span> VND';
             }
+        }
+        // Cập nhật lịch sử
+        const bidHistory = document.getElementById('bid-history');
+        if (bidHistory) {
+            bidHistory.insertAdjacentHTML('afterbegin', data.bid_html);
+            const emptyMsg = bidHistory.querySelector('.empty-msg');
+            if (emptyMsg) emptyMsg.remove();
         }
     };
 
