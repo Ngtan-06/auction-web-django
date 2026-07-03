@@ -14,8 +14,7 @@
             <div id="bid-form-container">
                 <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}">
                     {% csrf_token %}
-                    <button type="submit" id="bid-button" class="btn btn-primary" 
-                            {% if auction.current_bidder == user %}disabled{% endif %}>
+                    <button type="submit" id="bid-button" class="btn btn-primary" >
                         Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment|floatformat:0 }}</span> VND
                     </button>
                 </form>
@@ -58,7 +57,6 @@
 
         // Cập nhật giá hiển thị (dùng parseInt để bỏ .00)
         if (priceDisplay) priceDisplay.innerText = parseInt(data.current_price);
-        if (nextPriceDisplay) nextPriceDisplay.innerText = parseInt(data.next_bid);
 
         // Cập nhật lịch sử
         const bidHistory = document.getElementById('bid-history');
@@ -70,12 +68,11 @@
 
         // Logic nút bấm
         if (bidButton) {
-            if (parseInt(data.bidder_id) === myUserId) {
+            if (stringformat(data.bidder_id) === stringformat(myUserId)) {
                 bidButton.disabled = true;
                 bidButton.innerText = "Bạn đang giữ giá cao nhất";
             } else {
                 bidButton.disabled = false;
-                // Cập nhật lại HTML của nút nếu người khác vừa bid
                 bidButton.innerHTML = 'Đặt giá <span id="next-price-display">' + parseInt(data.next_bid) + '</span> VND';
             }
         }
