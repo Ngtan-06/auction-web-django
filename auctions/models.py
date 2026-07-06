@@ -18,7 +18,6 @@ class Category(models.Model):
 
 class Item(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='items')
-    # Thêm trường category
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='items')
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -56,7 +55,6 @@ class Bid(models.Model):
     class Meta:
         db_table = 'bids'
 
-# models.py
 class AuctionResult(models.Model):
     auction = models.OneToOneField(Auction, on_delete=models.CASCADE, related_name='result')
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

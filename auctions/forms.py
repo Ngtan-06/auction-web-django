@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Thêm class 'form-control' vào tất cả các trường
         for field in self.visible_fields():
             field.field.widget.attrs.update({'class': 'form-control'})
 
@@ -51,14 +50,6 @@ class ItemForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'image': forms.FileInput(attrs={'class': 'form-control'}),
+            'image_url': forms.URLInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
         }
-    def clean_image(self):
-        image = self.cleaned_data.get('image')
-        if image:
-            # Giới hạn 2MB (2 * 1024 * 1024 bytes)
-            max_size = 2 * 1024 * 1024
-            if image.size > max_size:
-                raise ValidationError("Ảnh quá lớn! Vui lòng chọn ảnh dưới 2MB.")
-        return image
