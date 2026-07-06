@@ -61,6 +61,7 @@ LANGUAGE_CODE = 'vi'
 INSTALLED_APPS = [
     'channels',
     'auctions',
+    'django_apscheduler',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
