@@ -38,7 +38,8 @@
 <hr>
 <h3>Lịch sử đặt giá</h3>
 <ul id="bid-history" class="list-group">
-    {% for bid in bids %}
+    <!-- Thêm |slice:":5" để giới hạn 5 item đầu tiên -->
+    {% for bid in bids|slice:":5" %}
         {% include 'partials/bid_item.html' %}
     {% empty %}
         <li class="list-group-item empty-msg">Chưa có ai đặt giá.</li>
@@ -78,12 +79,20 @@
 
         document.getElementById('price-display').innerText = parseInt(data.current_price);
         
-        // Cập nhật lịch sử
+        // CẬP NHẬT LỊCH SỬ ĐẶT GIÁ (GIỚI HẠN 5 ITEMS)
         const bidHistory = document.getElementById('bid-history');
         if (bidHistory) {
+            // Chèn lịch sử mới lên đầu danh sách
             bidHistory.insertAdjacentHTML('afterbegin', data.bid_html);
+            
+            // Xóa dòng "Chưa có ai đặt giá" nếu có
             const emptyMsg = bidHistory.querySelector('.empty-msg');
             if (emptyMsg) emptyMsg.remove();
+
+            // Kiểm tra nếu danh sách vượt quá 5 người, xóa người cũ nhất ở dưới cùng đi
+            while (bidHistory.children.length > 5) {
+                bidHistory.lastElementChild.remove();
+            }
         }
 
         // Logic nút bấm an toàn
