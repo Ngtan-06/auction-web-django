@@ -12,6 +12,12 @@ class AuctionConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        if data.get('type') == 'ping':
+            # Phản hồi lại gói tin ping để giữ kết nối cho client
+            await self.send(text_data=json.dumps({'type': 'ping'}))
+
     # Gửi giá mới tới tất cả người dùng trong group
     async def send_new_bid(self, event):
         await self.send(text_data=json.dumps({'current_price': event['current_price'],

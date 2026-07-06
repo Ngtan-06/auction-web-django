@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Q
+from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
@@ -108,19 +108,25 @@ def auction_detail_view(request, auction_id):
 
 @login_required
 def place_bid_view(request, auction_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Phương thức không hợp lệ.'}, status=400)
+
     auction = get_object_or_404(Auction, id=auction_id)
     
-    # Chặn nếu user đã là người đặt giá cao nhất
+    # Kiểm tra 1: Chặn nếu user đã là người đặt giá cao nhất
     if auction.current_bidder == request.user:
-        messages.error(request, "Bạn đang giữ giá cao nhất!")
-        return redirect('auction_detail', auction_id=auction.id)
+        return JsonResponse({'success': False, 'message': 'Bạn đang giữ giá cao nhất!'}, status=400)
         
-    if timezone.now() > auction.end_time:
-        messages.error(request, "Phiên đấu giá đã kết thúc!")
-        return redirect('auction_detail', auction_id=auction.id)
+    # Kiểm tra 2: Chặn nếu phiên đấu giá đã kết thúc
+    if timezone.now() > auction.end_time or auction.status != 'active':
+        return JsonResponse({'success': False, 'message': 'Phiên đấu giá này đã kết thúc!'}, status=400)
 
-    place_bid(request.user, auction)
-    return redirect('auction_detail', auction_id=auction.id)
+    try:
+        # Gọi hàm xử lý từ service.py (Hàm này đã có sẵn logic gửi sang WebSocket)
+        place_bid(request.user, auction)
+        return JsonResponse({'success': True, 'message': 'Đặt giá thành công!'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Có lỗi xảy ra: {str(e)}'}, status=500)
     
 @login_required
 def dashboard_view(request):

@@ -47,16 +47,38 @@
 </ul>
 
 <script>
-    // 1. Gửi form bằng AJAX để tránh reload trang
+// 1. Gửi form bằng AJAX và xử lý phản hồi từ Backend
     document.getElementById('bid-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('bid-button');
+        const originalText = btn.innerText;
+        
+        // Khóa nút bấm khi đang xử lý
         btn.disabled = true;
         btn.innerText = "Đang xử lý...";
         
         fetch("{% url 'place_bid' auction.id %}", {
             method: 'POST',
-            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                // Nếu backend trả về lỗi, hiển thị thông báo và khôi phục nút bấm
+                alert(data.message);
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+            // Nếu thành công, KHÔNG cần mở khóa nút ở đây vì WebSocket bên dưới sẽ lo việc đồng bộ giao diện
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi kết nối đến máy chủ.');
+            btn.disabled = false;
+            btn.innerText = originalText;
         });
     });
 
