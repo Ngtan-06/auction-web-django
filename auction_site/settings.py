@@ -94,8 +94,9 @@ MIDDLEWARE = [
 ]
 
 # Đường dẫn tới thư mục chứa các file tĩnh khi đã gom lại (collectstatic)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Quan trọng: Cấu hình để Whitenoise phục vụ file tĩnh
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
