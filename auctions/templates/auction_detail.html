@@ -8,14 +8,19 @@
     <div class="col-md-6">
         <h1>{{ auction.item.name }}</h1>
         <p>{{ auction.item.description }}</p>
-        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price| floatformat:0 }}</span> VND</h3>
+        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price|floatformat:0 }}</span> VND</h3>
         
         {% if auction.status == 'active' %}
             <div id="bid-form-container">
-                <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}">
+                <!-- KHÔNG dùng action URL để tránh reload, dùng AJAX xử lý -->
+                <form id="bid-form">
                     {% csrf_token %}
-                    <button type="submit" id="bid-button" class="btn btn-primary" >
-                        Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment|floatformat:0 }}</span> VND
+                    <button type="submit" id="bid-button" class="btn btn-primary" {% if auction.current_bidder == user %}disabled{% endif %}>
+                        {% if auction.current_bidder == user %}
+                            Bạn đang giữ giá cao nhất
+                        {% else %}
+                            Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment|floatformat:0 }}</span> VND
+                        {% endif %}
                     </button>
                 </form>
             </div>
@@ -31,7 +36,6 @@
 </div>
 
 <hr>
-
 <h3>Lịch sử đặt giá</h3>
 <ul id="bid-history" class="list-group">
     {% for bid in bids %}
@@ -40,34 +44,40 @@
         <li class="list-group-item empty-msg">Chưa có ai đặt giá.</li>
     {% endfor %}
 </ul>
+
 <script>
-    // 1. Khởi tạo kết nối WebSocket (Đảm bảo tên biến đồng nhất là 'socket')
+    // 1. Gửi form bằng AJAX để tránh reload trang
+    document.getElementById('bid-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('bid-button');
+        btn.disabled = true;
+        btn.innerText = "Đang xử lý...";
+        
+        fetch("{% url 'place_bid' auction.id %}", {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        });
+    });
+
+    // 2. Khởi tạo WebSocket với Heartbeat
     const auctionId = "{{ auction.id }}";
     const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const domain = window.location.host;
-    const socket = new WebSocket(protocol + domain + '/ws/auction/' + auctionId + '/');
+    const socket = new WebSocket(protocol + window.location.host + '/ws/auction/' + auctionId + '/');
 
-    // 2. Xử lý khi có tin nhắn mới
+    // Giữ kết nối sống
+    let heartbeat = setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ 'type': 'ping' }));
+    }, 30000);
+
     socket.onmessage = function(e) {
         const data = JSON.parse(e.data);
+        if (data.type === 'ping') return;
+
         const bidButton = document.getElementById('bid-button');
-        const priceDisplay = document.getElementById('price-display');
-        const nextPriceDisplay = document.getElementById('next-price-display');
-        const myUserId = {{ user.id }};
+        const myUserId = {{ user.id|default:"null" }};
 
-        // Cập nhật giá hiển thị (dùng parseInt để bỏ .00)
-        if (priceDisplay) priceDisplay.innerText = parseInt(data.current_price);
-        if (nextPriceDisplay) nextPriceDisplay.innerText = parseInt(data.next_bid);
-
-        if (bidButton) {
-            if (parseInt(data.bidder_id) === parseInt(myUserId)) {
-                bidButton.disabled = true;
-                bidButton.innerText = "Bạn đang giữ giá cao nhất";
-            } else {
-                bidButton.disabled = false;
-                bidButton.innerHTML = 'Đặt giá <span id="next-price-display">' + parseInt(data.next_bid) + '</span> VND';
-            }
-        }
+        document.getElementById('price-display').innerText = parseInt(data.current_price);
+        
         // Cập nhật lịch sử
         const bidHistory = document.getElementById('bid-history');
         if (bidHistory) {
@@ -75,11 +85,23 @@
             const emptyMsg = bidHistory.querySelector('.empty-msg');
             if (emptyMsg) emptyMsg.remove();
         }
+
+        // Logic nút bấm an toàn
+        if (bidButton) {
+            if (parseInt(data.bidder_id) === myUserId) {
+                bidButton.disabled = true;
+                bidButton.innerText = "Bạn đang giữ giá cao nhất";
+            } else {
+                bidButton.disabled = false;
+                bidButton.innerHTML = 'Đặt giá <span id="next-price-display">' + parseInt(data.next_bid) + '</span> VND';
+            }
+        }
     };
 
-    // Xử lý khi kết nối bị đóng
-    socket.onclose = function(e) {
-        console.error('Socket đã đóng đột ngột');
+    socket.onclose = function() {
+        clearInterval(heartbeat);
+        console.warn('Socket đóng, kết nối lại sau 5s...');
+        setTimeout(() => location.reload(), 5000);
     };
 </script>
 {% endblock %}
