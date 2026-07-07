@@ -9,4 +9,3 @@ daphne
 Pillow
 whitenoise
 channels_redis
-django-apscheduler==0.6.2

@@ -69,18 +69,20 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {% for auction in upcoming_auctions %}
         <div class="col d-flex align-items-stretch">
-            <div class="card shadow-sm bg-light w-100 uniform-card">
-                <!-- Bọc ảnh phần sắp diễn ra -->
+            <div class="card shadow-sm w-100 uniform-card">
+                <!-- Bọc ảnh vào container cố định kích thước -->
                 <div class="img-container">
                     <img src="{{ auction.item.image_url }}" class="card-img-top" alt="{{ auction.item.name }}">
                 </div>
                 
                 <div class="card-body card-body-custom">
                     <h5 class="card-title text-truncate" title="{{ auction.item.name }}">{{ auction.item.name }}</h5>
-                    
+                    <p class="card-text text-muted small">{{ auction.item.description|truncatewords:10 }}</p>
                     <div class="card-footer-custom w-100">
-                        <p class="text-secondary small mb-2">Bắt đầu lúc: {{ auction.start_time|date:"d/m H:i" }}</p>
-                        <button class="btn btn-secondary w-100" disabled>Đang chờ</button>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            Bắt đầu: <span class="text-primary">{{ auction.start_time|date:"d/m H:i" }}</span>
+                        </div>
+                        <a href="{% url 'auction_detail' auction.id %}" class="btn btn-outline-primary w-100">Chi tiết sản phẩm</a>
                     </div>
                 </div>
             </div>

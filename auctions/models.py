@@ -32,9 +32,9 @@ class Item(models.Model):
 
 class Auction(models.Model):
     item = models.OneToOneField(Item, on_delete=models.CASCADE, related_name='auction')
-    bid_increment = models.DecimalField(max_digits=10, decimal_places=2, default=10.00) # Bước giá mặc định
-    start_price = models.DecimalField(max_digits=12, decimal_places=2)
-    current_price = models.DecimalField(max_digits=12, decimal_places=2)
+    bid_increment = models.IntegerField(default=10) # Bước giá mặc định
+    start_price = models.IntegerField()
+    current_price = models.IntegerField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     status = models.CharField(max_length=20, default='pending') # pending, active, ended
@@ -49,7 +49,7 @@ class Auction(models.Model):
 class Bid(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name='bids')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    bid_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    bid_amount = models.IntegerField()
     bid_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -58,7 +58,7 @@ class Bid(models.Model):
 class AuctionResult(models.Model):
     auction = models.OneToOneField(Auction, on_delete=models.CASCADE, related_name='result')
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    final_price = models.DecimalField(max_digits=12, decimal_places=2)
+    final_price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

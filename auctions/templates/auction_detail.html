@@ -7,28 +7,43 @@
     </div>
     <div class="col-md-6">
         <h1>{{ auction.item.name }}</h1>
-        <p>{{ auction.item.description }}</p>
-        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price|floatformat:0 }}</span> VND</h3>
-        
+        <p class="lead">{{ auction.item.description }}</p>
+        <hr>
+
         {% if auction.status == 'active' %}
+        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price}}</span> VND</h3>
             <div id="bid-form-container">
-                <!-- KHÔNG dùng action URL để tránh reload, dùng AJAX xử lý -->
                 <form id="bid-form">
                     {% csrf_token %}
                     <button type="submit" id="bid-button" class="btn btn-primary" {% if auction.current_bidder == user %}disabled{% endif %}>
                         {% if auction.current_bidder == user %}
                             Bạn đang giữ giá cao nhất
                         {% else %}
-                            Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment|floatformat:0 }}</span> VND
+                            Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment}}</span> VND
                         {% endif %}
                     </button>
                 </form>
             </div>
+         {% elif auction.start_time > timezone.now or auction.status == 'pending' %}
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="bi bi-hourglass-split"></i> Phiên đấu giá chưa bắt đầu</h4>
+                    <p class="card-text">Sản phẩm này đang trong giai đoạn triển lãm xem trước. Hệ thống đặt giá sẽ tự động mở khi tới giờ.</p>
+                    
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item bg-transparent">Giá khởi điểm: <strong>{{ auction.start_price}} VND</strong></li>
+                        <li class="list-group-item bg-transparent">Bước giá tối thiểu: <strong>{{ auction.bid_increment}} VND</strong></li>
+                        <li class="list-group-item bg-transparent">Thời gian mở đấu giá: <span class="fw-bold">{{ auction.start_time|date:"d/m/Y H:i:s" }}</span></li>
+                    </ul>
+                </div>
+            </div>
         {% else %}
-            <div class="alert alert-warning">
-                Phiên đấu giá đã kết thúc. 
+            <div class="alert alert-danger shadow-sm">
+                <h5><i class="bi bi-patch-check"></i> Phiên đấu giá đã kết thúc</h5> 
                 {% if auction.result.winner == request.user %}
-                    <strong>Chúc mừng! Bạn đã thắng phiên này.</strong>
+                    <strong class="text-success">Chúc mừng! Bạn đã thắng phiên đấu giá này với mức giá {{ auction.result.final_price|floatformat:0 }} VND.</strong>
+                {% else %}
+                    <p class="mb-0">Phiên đấu giá đã đóng giao dịch thành công.</p>
                 {% endif %}
             </div>
         {% endif %}
