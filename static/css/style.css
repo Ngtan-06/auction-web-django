@@ -4,7 +4,7 @@
     --accent-gold: #D4AF37;         /* Antique Gold (Vàng kim cao cấp) */
     --accent-gold-hover: #B4932F;
     --urgency-red: #DC2626;         /* Brick Red (Đỏ gạch báo giờ) */
-    --bg-page: #F8FAFC;             /* Off-white (Nền trang trắng kem) */
+    --bg-page: #E2E8F0;
     --text-dark: #1E293B;
     --text-muted: #64748B;
     --white: #FFFFFF;
@@ -36,17 +36,27 @@ body {
 }
 
 /* Ô tìm kiếm trên thanh điều hướng */
+/* --- Ô tìm kiếm trên thanh điều hướng --- */
 .search-box {
-    background-color: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: var(--white) !important;
+    background-color: rgba(255, 255, 255, 0.15); /* Làm nền ô sáng hơn 1 chút */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white) !important; /* Màu chữ khi gõ */
     font-size: 0.85rem;
 }
+
+/* THÊM MỚI: Ép màu cho chữ gợi ý "Tìm kiếm sản phẩm..." */
+.search-box::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important; /* Trắng trong suốt, rất dễ đọc */
+    opacity: 1; /* Sửa lỗi hiển thị mờ trên Firefox */
+}
+
 .search-box:focus {
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.25);
     border-color: var(--accent-gold);
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+    color: var(--white) !important;
 }
+
 .btn-search {
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #CBD5E1;
