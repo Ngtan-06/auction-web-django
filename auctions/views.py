@@ -94,12 +94,6 @@ def home_view(request):
 
 def auction_detail_view(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
-    # Kiểm tra nếu phiên còn 'active' nhưng đã quá giờ
-    if auction.status == 'active' and timezone.now() > auction.end_time:
-        finalize_auction(auction)
-        # Refresh lại đối tượng auction sau khi đã update status trong service
-        auction.refresh_from_db()
-    # Lấy lịch sử đấu giá, sắp xếp theo thời gian mới nhất
     bids = auction.bids.all().order_by('-bid_time')
     
     return render(request, 'auction_detail.html', {
@@ -153,7 +147,7 @@ def cron_trigger_auctions_view(request):
     provided_token = request.GET.get('token')
     
     # Mã bí mật lưu ở biến môi trường Environment Variable (mặc định lấy chuỗi tạm nếu dev local)
-    secret_token = os.getenv('CRON_SECRET_TOKEN', 'my-super-secret-token-2026')
+    secret_token = os.getenv('CRON_SECRET_TOKEN')
 
     # Kiểm tra tính hợp lệ
     if not provided_token or provided_token != secret_token:

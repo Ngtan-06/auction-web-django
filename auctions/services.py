@@ -45,7 +45,7 @@ def finalize_auction(auction):
         return
 
     # 1. Tìm người đặt giá cao nhất
-    highest_bid = auction.bids.order_by('-bid_amount').first()
+    highest_bid = auction.bids.order_by('-bid_amount', '-bid_time').first()
     
     if highest_bid:
         # 2. Lưu kết quả
