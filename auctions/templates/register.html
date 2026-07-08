@@ -1,60 +1,50 @@
 {% extends "base.html" %}
 {% load static %} 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-  {% block Register %}
-  <section class="vh-100" style="background-color: #eee;">
-    <div class="container h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-lg-10 col-xl-9">
-          <div class="card text-black" style="border-radius: 25px;">
-            <div class="card-body p-md-5">
-              <div class="row">
-                <div class="col-md-6 order-2 order-md-1">
-                  <p class="text-center h2 fw-bold mb-4">Sign up</p>
+{% block content %}
+<section class="vh-100 d-flex align-items-center" style="background-color: #f8fafc;">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-lg-10 col-xl-9">
+        <div class="card text-black shadow-sm" style="border-radius: 25px;">
+          <div class="card-body p-md-5">
+            <div class="row align-items-center">
+              <!-- Form Register -->
+              <div class="col-md-6 order-2 order-md-1">
+                <p class="text-center h2 fw-bold mb-4">Đăng ký tài khoản</p>
 
-                  <form method="POST">
-                    {% csrf_token %}
-                    {% for field in form %}
-                      <div class="mb-3">
-                        {{ field.label_tag }}
-                        {{ field }}
-                        <div>
-                          {% if field.errors %}
-                          <small class="text-danger">{{ field.errors.0 }}</small>
-                          {% endif %}
-                        </div>
-                      </div>
-                    {% endfor %}
-
-                    <div class="d-grid mt-4">
-                      <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                <form method="POST">
+                  {% csrf_token %}
+                  {% for field in form %}
+                    <div class="mb-3">
+                      {{ field.label_tag }}
+                      {{ field }}
+                      {% if field.errors %}
+                        <small class="text-danger d-block mt-1">{{ field.errors.0 }}</small>
+                      {% endif %}
                     </div>
-                    
-                    <p class="text-center mt-3 small">
-                      You have an account? <a href="{% url 'login' %}">Login</a>
-                    </p>
-                  </form>
-                </div>
+                  {% endfor %}
 
-                <div class="col-md-6 d-flex align-items-center order-1 order-md-2 mb-4 mb-md-0">
-                  <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                    class="img-fluid" alt="Sample image">
-                </div>
+                  <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px;">Đăng ký</button>
+                  </div>
+                  
+                  <p class="text-center mt-3 small">
+                    Đã có tài khoản? <a href="{% url 'login' %}" class="fw-bold">Đăng nhập</a>
+                  </p>
+                </form>
+              </div>
+
+              <!-- Hình ảnh minh họa -->
+              <div class="col-md-6 order-1 order-md-2 mb-4 mb-md-0">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                  class="img-fluid" alt="Register image">
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
-  {% endblock %}
-</body>
-</html>
+  </div>
+</section>
+{% endblock %}
