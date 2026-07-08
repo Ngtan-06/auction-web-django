@@ -27,54 +27,77 @@
                     {{ auction.item.category.name }}
                 </span>
                 <h2 class="fw-bold mb-3" style="color: var(--primary-color); letter-spacing: -0.5px;">{{ auction.item.name }}</h2>
-                
-                <p class="text-muted small mb-4">Được đăng bởi: <span class="fw-semibold text-dark">{{ auction.seller.username }}</span></p>
-
-                <div class="premium-price-badge">
-                    <span class="price-label">Giá hiện tại</span>
-                    <span class="price-amount">
-                        <span id="price-display">{{ auction.current_price|floatformat:0 }}</span> <span style="font-size: 1.1rem; font-weight: 600;">VND</span>
-                    </span>
-                </div>
-
-                <div class="p-3 rounded-3 mb-4 border d-flex justify-content-between align-items-center" style="background-color: #F8FAFC;">
-                    <div>
-                        <span class="text-muted small d-block text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Thời gian đóng sàn</span>
-                        <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ auction.end_time|date:"d/m/Y H:i" }}</span>
-                    </div>
-                    <div class="text-end">
-                        <span class="badge" style="background-color: rgba(220, 38, 38, 0.1); color: var(--urgency-red); font-weight: 700; font-size: 0.8rem; padding: 6px 12px;">
-                            Đang diễn ra
+                {% if auction.status == 'active' %}
+                    <div class="premium-price-badge">
+                        <span class="price-label">Giá hiện tại</span>
+                        <span class="price-amount">
+                            <span id="price-display">{{ auction.current_price}}</span> <span style="font-size: 1.1rem; font-weight: 600;">VND</span>
                         </span>
                     </div>
-                </div>
 
-                {% if user.is_authenticated %}
-                    {% if user != auction.seller %}
-                        <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}" class="mb-4">
-                            {% csrf_token %}
-                            <label for="bid_amount" class="form-label small fw-bold text-secondary mb-2">Nhập giá mua của bạn (VND):</label>
-                            <div class="input-group bid-input-group">
-                                <input type="number" class="form-control" id="bid_amount" name="bid_amount" 
-                                       min="{{ auction.current_price }}" step="10000" placeholder="Mức giá đề xuất..." required>
-                                <button class="btn btn-bid-action" type="submit" id="bid-button">Đặt giá</button>
-                            </div>
-                            <span class="form-text text-muted small mt-2 d-block">
-                                * Giá đặt tối thiểu tiếp theo phải lớn hơn <strong style="color: var(--primary-color);">{{ auction.current_price|floatformat:0 }} VND</strong>
-                            </span>
-                        </form>
-                    {% else %}
-                        <div class="alert alert-warning small border-0 py-3 mb-4" style="background-color: #FFFBEB; color: #B45309; border-radius: 8px;">
-                            🔒 Bạn là người đăng sản phẩm này, không thể tự tham gia đặt giá.
+                    <div class="p-3 rounded-3 mb-4 border d-flex justify-content-between align-items-center" style="background-color: #F8FAFC;">
+                        <div>
+                            <span class="text-muted small d-block text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Thời gian đóng sàn</span>
+                            <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ auction.end_time|date:"d/m/Y H:i" }}</span>
                         </div>
-                    {% endif %}
-                {% else %}
-                    <div class="alert alert-info small border-0 py-3 mb-4" style="background-color: #EFF6FF; color: #1D4ED8; border-radius: 8px;">
-                        🔑 Vui lòng <a href="{% url 'login' %}" class="fw-bold text-decoration-underline" style="color: #1D4ED8;">Đăng nhập</a> để tham gia phiên đấu giá này.
+                        <div class="text-end">
+                            <span class="badge" style="background-color: rgba(220, 38, 38, 0.1); color: var(--urgency-red); font-weight: 700; font-size: 0.8rem; padding: 6px 12px;">
+                                Đang diễn ra
+                            </span>
+                        </div>
                     </div>
+                    {% if user.is_authenticated %}
+                        {% if user != auction.seller %}
+                            <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}" class="mb-4">
+                                {% csrf_token %}
+                                <div class="input-group bid-input-group">
+                                    <button type="submit" id="bid-button" class="btn btn-bid-action" {% if auction.current_bidder == user %}disabled{% endif %}>
+                                        {% if auction.current_bidder == user %}
+                                            Bạn đang giữ giá cao nhất
+                                        {% else %}
+                                            Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment}}</span> VND
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-warning small border-0 py-3 mb-4" style="background-color: #FFFBEB; color: #B45309; border-radius: 8px;">
+                                🔒 Bạn là người đăng sản phẩm này, không thể tự tham gia đặt giá.
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info small border-0 py-3 mb-4" style="background-color: #EFF6FF; color: #1D4ED8; border-radius: 8px;">
+                            🔑 Vui lòng <a href="{% url 'login' %}" class="fw-bold text-decoration-underline" style="color: #1D4ED8;">Đăng nhập</a> để tham gia phiên đấu giá này.
+                        </div>
+                    {% endif %}       
+                {% elif auction.status == 'pending' %}
+                    <div class="premium-price-badge">
+                        <span class="price-label">Giá khởi điểm</span>
+                        <span class="price-amount">
+                            <span id="price-display">{{ auction.current_price}}</span> <span style="font-size: 1.1rem; font-weight: 600;">VND</span>
+                        </span>
+                    </div>
+
+                    <div class="p-3 rounded-3 mb-4 border d-flex justify-content-between align-items-center" style="background-color: #F8FAFC;">
+                        <div>
+                            <span class="text-muted small d-block text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Thời gian mở sàn</span>
+                            <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ auction.start_time|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge" style="background-color: rgba(220, 38, 38, 0.1); color: var(--urgency-red); font-weight: 700; font-size: 0.8rem; padding: 6px 12px;">
+                                Sắp diễn ra
+                            </span>
+                        </div>
+                    </div>
+                    <div class="input-group bid-input-group">
+                        <button type="button" class="btn btn-bid-action">Bước giá {{ auction.bid_increment}} VND</button>
+                    </div>
+                {% else %}
+                <div class="premium-price-badge">
+                    <span class="price-label">Phiên đấu giá đã kết thúc</span>
+                </div>
                 {% endif %}
             </div>
-
             <div class="history-card mt-4">
                 <div class="history-header d-flex justify-content-between align-items-center">
                     <span>Lịch sử đặt giá công khai</span>
@@ -82,7 +105,7 @@
                 </div>
                 
                 <div class="list-group list-group-flush" id="bid-history">
-                    {% for bid in bids %}
+                    {% for bid in bids|slice:":5" %}
                         <div class="history-list-item {% if forloop.first %}leader-item{% endif %}">
                             <div>
                                 <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ bid.bidder.username }}</span>
@@ -102,10 +125,11 @@
                     {% endfor %}
                 </div>
             </div>
-            
         </div>
     </div>
 </div>
+
+
 <script>
 // 1. Gửi form bằng AJAX và xử lý phản hồi từ Backend
     document.getElementById('bid-form').addEventListener('submit', function(e) {
