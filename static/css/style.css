@@ -374,3 +374,27 @@ footer {
     background-color: var(--primary-color);
     color: var(--white);
 }
+
+/* --- TÙY CHỈNH FORM ĐĂNG SẢN PHẨM --- */
+.premium-bid-card input, 
+.premium-bid-card textarea, 
+.premium-bid-card select {
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1rem !important;
+    transition: var(--transition-smooth) !important;
+}
+
+.premium-bid-card input:focus, 
+.premium-bid-card textarea:focus, 
+.premium-bid-card select:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15) !important;
+    outline: none !important;
+}
+
+.premium-bid-card label {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    margin-bottom: 0.4rem;
+}
