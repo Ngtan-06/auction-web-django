@@ -50,17 +50,15 @@
                         {% if user != auction.seller %}
                             <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}" class="mb-4">
                                 {% csrf_token %}
-                                <div class="input-group bid-input-group w-100">
-                                    <button type="submit" id="bid-button" class="btn btn-bid-action" {% if auction.current_bidder == user %}disabled{% endif %}>
-                                        {% if auction.current_bidder == user %}
-                                            <div class="bid-status-banner is-leader" style="width: 100%; text-align: center; background-color: #E2E8F0; padding: 1rem; border-radius: 8px; font-weight: bold; color: #94A3B8;">
-                                                BẠN ĐANG GIỮ GIÁ CAO NHẤT
-                                            </div>
-                                        {% else %}
-                                            Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment}}</span> VND
-                                        {% endif %}
-                                    </button>
-                                </div>
+                                <button type="submit" id="bid-button" class="btn btn-bid-action" {% if auction.current_bidder == user %}disabled{% endif %}>
+                                    {% if auction.current_bidder == user %}
+                                        <div class="bid-status-banner is-leader" style="width: 100%; text-align: center; background-color: #E2E8F0; padding: 1rem; border-radius: 8px; font-weight: bold; color: #94A3B8;">
+                                            BẠN ĐANG GIỮ GIÁ CAO NHẤT
+                                        </div>
+                                    {% else %}
+                                        Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment}}</span> VND
+                                    {% endif %}
+                                </button>
                             </form>
                         {% else %}
                             <div class="alert alert-warning small border-0 py-3 mb-4" style="background-color: #FFFBEB; color: #B45309; border-radius: 8px;">

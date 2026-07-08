@@ -1,14 +1,8 @@
 <div class="history-list-item {% if is_highest or forloop.first %}leader-item{% endif %}">
     <div>
         <span class="fw-bold text-dark" style="font-size: 0.95rem;">#{{ bid.user.id }}</span>
-
-        {% if is_highest or forloop.first %}
-            <span class="ms-2 leader-badge">Dẫn đầu</span>
-        {% endif %}
-
         <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">{{ bid.bid_time|date:"H:i:s d/m" }}</small>
     </div>
-
     <div class="text-end">
         <span class="fw-bold text-dark" style="font-size: 1.05rem;">{{ bid.bid_amount}} VND</span>
     </div>
