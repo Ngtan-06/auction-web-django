@@ -5,7 +5,7 @@
 {% if auctions %}
     <h3 class="mb-4 fw-bold" style="color: var(--primary-color);">Các phiên đấu giá đang diễn ra</h3>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-        {% for auction in auctions %}
+        {% for auction in auctions|slice:":4" %}
         <div class="col d-flex align-items-stretch">
             <div class="card shadow-sm w-100 uniform-card">
                 <div class="img-container">
@@ -43,7 +43,7 @@
 {% if upcoming_auctions %}
     <h3 class="mb-4 fw-bold" style="color: var(--primary-color);">Sắp đấu giá</h3>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {% for auction in upcoming_auctions %}
+        {% for auction in upcoming_auctions|slice:":4" %}
         <div class="col d-flex align-items-stretch">
             <div class="card shadow-sm w-100 uniform-card">
                 <div class="img-container">

@@ -1,9 +1,11 @@
 from django.utils import timezone
 from django.template.loader import render_to_string
-from .models import Bid, Notification, AuctionResult
+from django.db import transaction
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
+from .models import Bid, Notification, AuctionResult, Auction
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-
 
 def place_bid(user, auction):
     next_bid = auction.current_price + auction.bid_increment
@@ -39,6 +41,9 @@ def place_bid(user, auction):
     )
 
 def finalize_auction(auction):
+    if auction.status != 'active':
+        return
+
     # 1. Tìm người đặt giá cao nhất
     highest_bid = auction.bids.order_by('-bid_amount').first()
     
@@ -53,8 +58,57 @@ def finalize_auction(auction):
         # 3. Tạo thông báo cho người thắng
         Notification.objects.create(
             user=highest_bid.user,
-            message=f"Chúc mừng! Bạn đã thắng phiên đấu giá {auction.item.name} với giá {highest_bid.bid_amount}."
+            message=f"Chúc mừng! Bạn đã thắng phiên đấu giá {auction.item.name} với giá {highest_bid.bid_amount:,.0f} VNĐ."
         )
-    
+        
+        # Ghi nhận người thắng vào bảng Auction
+        auction.current_bidder = highest_bid.user
+        auction.current_price = highest_bid.bid_amount
+
+        winner_email = highest_bid.user.email
+        if winner_email:
+            try:
+                subject = f"🎉 Chúc mừng! Bạn đã thắng đấu giá sản phẩm: {auction.item.name}"
+                html_message = f"""
+                    <html>
+                        <body>
+                            <h2>Chúc mừng {highest_bid.user.username}!</h2>
+                            <p>Bạn đã chiến thắng cuộc đấu giá cho sản phẩm <strong>{auction.item.name}</strong>.</p>
+                            <p>Giá chốt phiên: <strong>{highest_bid.bid_amount} VND</strong>.</p>
+                            <p>Vui lòng tiến hành thanh toán trong vòng 24 giờ để hoàn tất đơn hàng.</p>
+                        </body>
+                    </html>
+                """
+                plain_message = strip_tags(html_message)
+                from_email = 'noreply@sandaugia.com'
+                to_email = highest_bid.user.email
+
+                send_mail(subject, plain_message, from_email, [to_email], html_message=html_message, fail_silently=True)
+            except Exception as e:
+                print(f"Lỗi gửi email cho phiên {auction.id}: {e}")
     auction.status = 'ended'
     auction.save()
+
+
+def check_and_update_auctions():
+    now = timezone.now()
+    # 1. MỞ PHIÊN ĐẤU GIÁ (pending -> active)
+    pending_auctions = Auction.objects.filter(status='pending', start_time__lte=now)
+    
+    # Sử dụng .update() để thay đổi hàng loạt trong 1 câu lệnh SQL duy nhất (Rất tối ưu)
+    opened_count = pending_auctions.update(status='active')
+
+    # 2. ĐÓNG PHIÊN ĐẤU GIÁ (active -> ended)
+    closed_count = 0
+    with transaction.atomic():
+        ended_auctions = Auction.objects.select_for_update(skip_locked=True).filter(
+            status='active', end_time__lte=now
+        )
+        for auction in ended_auctions:
+            finalize_auction(auction)
+            closed_count += 1
+            
+    return {
+        "opened": opened_count,
+        "closed": closed_count
+    }

@@ -10,4 +10,5 @@ urlpatterns = [
     path('auction/<int:auction_id>/bid/', views.place_bid_view, name='place_bid'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('create/', views.create_auction_view, name='create_auction'),
+    path('api/cron/trigger-auctions/', views.cron_trigger_auctions_view, name='cron_trigger_auctions'),
 ]

@@ -1,3 +1,4 @@
+import os
 from django.db import transaction
 from django.http import JsonResponse
 from django.utils import timezone
@@ -6,7 +7,7 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
-from .services import place_bid, finalize_auction
+from .services import place_bid, finalize_auction, check_and_update_auctions
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, AuctionCreateForm, ItemForm
 from .models import Auction, Category, Notification, AuctionResult
 
@@ -147,3 +148,22 @@ def mark_as_read(request, notification_id):
     note.is_read = True
     note.save()
     return redirect('dashboard')
+
+def cron_trigger_auctions_view(request):
+    provided_token = request.GET.get('token')
+    
+    # Mã bí mật lưu ở biến môi trường Environment Variable (mặc định lấy chuỗi tạm nếu dev local)
+    secret_token = os.getenv('CRON_SECRET_TOKEN', 'my-super-secret-token-2026')
+
+    # Kiểm tra tính hợp lệ
+    if not provided_token or provided_token != secret_token:
+        return JsonResponse({'success': False, 'message': 'Unauthorized access'}, status=403)
+
+    # Thực hiện quét database
+    result = check_and_update_auctions()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Cập nhật các phiên đấu giá thành công!',
+        'data': result
+    })
