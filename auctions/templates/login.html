@@ -1,52 +1,35 @@
 {% extends "base.html" %}
-{% load static %} 
 
 {% block content %}
 <section class="vh-100 d-flex align-items-center" style="background-color: #f8fafc;">
   <div class="container">
-    <div class="row d-flex justify-content-center">
-      <div class="col-lg-10 col-xl-9">
-        <div class="card text-black shadow-sm" style="border-radius: 25px;">
-          <div class="card-body p-md-5">
-            <div class="row align-items-center">
-              <!-- Form Login -->
-              <div class="col-md-6 order-2 order-md-1">
-                <p class="text-center h2 fw-bold mb-4">Đăng nhập</p>
-
-                <form method="POST">
-                  {% csrf_token %}
-                  {% for field in form %}
-                    <div class="mb-3">
-                      {{ field.label_tag }}
-                      {{ field }}
-                    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm" style="border-radius: 25px;">
+          <div class="card-body p-4 p-md-5">
+            <h2 class="text-center fw-bold mb-4">Đăng nhập</h2>
+            <form method="POST">
+              {% csrf_token %}
+              {% for field in form %}
+                <div class="mb-3">
+                  {{ field.label_tag }}
+                  {{ field }}
+                </div>
+              {% endfor %}
+              
+              {% if messages %}
+                  {% for message in messages %}
+                      <div class="alert alert-{{ message.tags }} p-2 small">{{ message }}</div>
                   {% endfor %}
+              {% endif %}
 
-                  <!-- Hiển thị thông báo (error/success) -->
-                  {% if messages %}
-                      {% for message in messages %}
-                          <div class="alert alert-{{ message.tags }} p-2 small">
-                              {{ message }}
-                          </div>
-                      {% endfor %}
-                  {% endif %}
-
-                  <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 12px;">Đăng nhập</button>
-                  </div>
-                  
-                  <p class="text-center mt-3 small">
-                    Chưa có tài khoản? <a href="{% url 'register' %}" class="fw-bold">Đăng ký ngay</a>
-                  </p>
-                </form>
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
               </div>
-
-              <!-- Hình ảnh minh họa -->
-              <div class="col-md-6 order-1 order-md-2 mb-4 mb-md-0">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                  class="img-fluid" alt="Login image">
-              </div>
-            </div>
+              <p class="text-center mt-3 small">
+                Chưa có tài khoản? <a href="{% url 'register' %}">Đăng ký ngay</a>
+              </p>
+            </form>
           </div>
         </div>
       </div>

@@ -11,38 +11,12 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <header class="navbar navbar-expand-lg premium-navbar shadow-sm px-3 mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'images/logo.png' %}" width="45" height="45" alt="Logo">
-            </a>
+    {% if not request.resolver_match.url_name in 'login,register' %}
+        <header class="navbar navbar-expand-lg premium-navbar shadow-sm px-3 mb-4">
+            {% include 'navbar.html' %}
+        </header>
+    {% endif %}
 
-            <nav class="navbar-nav me-auto flex-row gap-2">
-                {% for cat in categories %}
-                    <a class="nav-link" href="{% url 'home' %}?category={{ cat.id }}">{{ cat.name }}</a>
-                {% endfor %}
-            </nav>
-
-            <form class="d-flex me-3 search-form-container" role="search" action="{% url 'home' %}" method="GET">
-                <input class="form-control me-2 search-box" type="search" name="q" placeholder="Tìm kiếm sản phẩm..." value="{{ request.GET.q }}">
-                <button class="btn btn-search" type="submit">Tìm</button>
-            </form>
-
-            <div class="d-flex align-items-center gap-2">
-                {% if user.is_authenticated %}
-                    <span class="text-white me-2 small">Xin chào, <strong>{{ user.username }}</strong></span>
-                    {% if user.role == 'seller' %}
-                        <a href="{% url 'create_auction' %}" class="btn btn-sm btn-gold">Đăng sản phẩm</a>
-                    {% endif %}
-                    <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-gold">Dashboard</a>
-                    <a href="{% url 'logout' %}" class="btn btn-sm btn-logout">Đăng xuất</a>
-                {% else %}
-                    <a class="btn btn-outline-gold btn-sm" href="{% url 'login' %}">Đăng nhập</a>
-                    <a class="btn btn-gold btn-sm" href="{% url 'register' %}">Đăng ký</a>
-                {% endif %}
-            </div>
-        </div>
-    </header>
 
     <main class="container">
         {% block content %}{% endblock %}
