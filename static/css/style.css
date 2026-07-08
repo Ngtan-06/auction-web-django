@@ -1,3 +1,215 @@
+/* --- BIẾN TOÀN CỤC (DESIGN SYSTEM) --- */
+:root {
+    --primary-dark: #0f172a;    /* Navy đậm */
+    --accent-gold: #eab308;     /* Vàng Gold - dành cho đấu giá */
+    --accent-gold-hover: #ca8a04;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --bg-light: #f8fafc;
+    --white: #ffffff;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+}
+
+/* --- HEADER & NAVBAR --- */
+.navbar {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px); /* Hiệu ứng kính mờ hiện đại */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 0;
+}
+
+.navbar-brand img {
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.1);
+}
+
+.nav-link {
+    font-weight: 500;
+    color: var(--primary-dark) !important;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: var(--accent-gold) !important;
+}
+
+/* --- NÚT BẤM (BUTTONS) --- */
+.btn-primary {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #1e293b;
+    border-color: #1e293b;
+}
+
+.btn-outline-primary {
+    color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-dark);
+    color: var(--white);
+}
+
+/* --- CARD SẢN PHẨM (HOME PAGE) --- */
+.uniform-card {
+    border: none;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+}
+
+.uniform-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.img-container {
+    height: 220px;
+    overflow: hidden;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    background-color: #f1f5f9;
+}
+
+.img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Giúp ảnh không bị méo */
+    transition: transform 0.5s;
+}
+
+.uniform-card:hover .img-container img {
+    transform: scale(1.1);
+}
+
+.card-body-custom {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+}
+
+.card-footer-custom {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* --- CHI TIẾT ĐẤU GIÁ (AUCTION DETAIL) --- */
+.price-tag {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
+}
+
+#bid-button {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #1e293b 100%);
+    color: var(--accent-gold);
+    border: none;
+    padding: 1rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
+}
+
+#bid-button:disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    box-shadow: none;
+}
+
+/* Lịch sử đặt giá */
+#bid-history .list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 1rem;
+    border-color: #f1f5f9;
+    transition: background 0.3s;
+}
+
+#bid-history .list-group-item:first-child {
+    background-color: #fffbeb; /* Highlight người mới nhất */
+    border-left: 4px solid var(--accent-gold);
+}
+
+/* --- DASHBOARD & TABLES --- */
+.table {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.table thead {
+    background-color: var(--primary-dark);
+    color: var(--white);
+}
+
+.table th {
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+}
+
+/* --- LOGIN / REGISTER CARDS --- */
+section.vh-100 {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+}
+
+.card[style*="border-radius: 25px;"] {
+    border: none;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+input.form-control {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+}
+
+input.form-control:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+}
+
+/* --- FOOTER --- */
+footer {
+    background: var(--white);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/*-------------------------------------*/
+
 *{
     margin:0;
     padding:0;

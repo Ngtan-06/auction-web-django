@@ -1,34 +1,5 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<style>
-    .uniform-card {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    .img-container {
-        width: 100%;
-        height: 200px; /* Cố định chiều cao khung ảnh (bạn có thể chỉnh lại số này tùy ý) */
-        overflow: hidden;
-        background-color: #f8f9fa; /* Nền xám nhẹ đề phòng ảnh trong suốt */
-    }
-    .img-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Cắt và lấp đầy khung hình mà không làm biến dạng/méo ảnh */
-        object-position: center; /* Luôn lấy tâm của bức ảnh */
-    }
-    .card-body-custom {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-    }
-    .card-footer-custom {
-        margin-top: auto; /* Đẩy phần giá tiền và nút bấm luôn nằm sát đáy Card để thẳng hàng */
-    }
-</style>
-
 {% if auctions %}
     <h2 class="mb-4">Các phiên đấu giá đang diễn ra</h2>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
@@ -47,8 +18,8 @@
                     
                     <!-- Khung thông tin và nút bấm được neo cố định dưới đáy -->
                     <div class="card-footer-custom w-100">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-primary font-weight-bold">{{ auction.current_price|floatformat:0 }} VND</span>
+                        <div class="price-tag d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-primary font-weight-bold">{{ auction.current_price}} VND</span>
                             <small class="text-danger">Kết thúc: {{ auction.end_time|date:"d/m H:i" }}</small>
                         </div>
                         <a href="{% url 'auction_detail' auction.id %}" class="btn btn-outline-primary w-100">Tham gia đấu giá</a>
