@@ -330,18 +330,3 @@ footer {
 .history-list-item:last-child {
     border-bottom: none;
 }
-
-/* Hiệu ứng đặc biệt cho người đang trả giá CAO NHẤT (Dẫn đầu) */
-.history-list-item.leader-item {
-    background-color: #FFFBEB; /* Nền vàng kem nhạt */
-    border-left: 4px solid var(--accent-gold);
-}
-.leader-badge {
-    background-color: var(--accent-gold);
-    color: var(--primary-color);
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-}

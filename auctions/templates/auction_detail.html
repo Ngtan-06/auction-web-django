@@ -106,7 +106,7 @@
                 
                 <div class="list-group list-group-flush" id="bid-history">
                     {% for bid in bids|slice:":5" %}
-                        {% include 'partials/bid_item.html' with bid=bid is_highest=forloop.first %}
+                        {% include 'partials/bid_item.html'%}
                     {% empty %}
                         <div class="p-4 text-center text-muted small" id="no-bids-msg">
                             Chưa có ai đặt giá cho sản phẩm này. Hãy là người đầu tiên!
