@@ -1,46 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4">Chào mừng, {{ request.user.username }}!</h2>
+<div class="container py-5">
+    <div class="mb-5">
+        <h2 class="fw-bold text-primary">Bảng điều khiển</h2>
+        <p class="text-muted">Chào mừng trở lại, <strong>{{ request.user.username }}</strong>. Dưới đây là hoạt động gần đây của bạn.</p>
+    </div>
     
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Thông báo mới</h3>
-            <div class="list-group">
-                {% for note in notifications %}
-                <div class="list-group-item">
-                    {{ note.message }}
-                    <small class="text-muted d-block">{{ note.created_at|timesince }} trước</small>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="premium-bid-card h-100">
+                <h4 class="mb-4 d-flex align-items-center">
+                    <i class="me-2">🔔</i> Thông báo mới
+                </h4>
+                <div class="notification-list">
+                    {% for note in notifications %}
+                    <div class="notification-item p-3 border-bottom">
+                        <p class="mb-1 fw-medium">{{ note.message }}</p>
+                        <small class="text-muted">{{ note.created_at|timesince }} trước</small>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center py-4">Không có thông báo mới.</p>
+                    {% endfor %}
                 </div>
-                {% empty %}
-                <p>Không có thông báo mới.</p>
-                {% endfor %}
             </div>
         </div>
 
-        <div class="col-md-6">
-            <h3>Kết quả đấu giá của bạn</h3>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Sản phẩm</th>
-                        <th>Giá thắng</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in won_auctions %}
-                    <tr>
-                        <td>{{ result.auction.item.name }}</td>
-                        <td>{{ result.final_price }} VND</td>
-                        <td><a href="#" class="btn btn-sm btn-info">Xem Hóa đơn</a></td>
-                    </tr>
-                    {% empty %}
-                    <tr><td colspan="3">Bạn chưa thắng phiên đấu giá nào.</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="col-lg-6">
+            <div class="premium-bid-card h-100">
+                <h4 class="mb-4 d-flex align-items-center">
+                    <i class="me-2">🏆</i> Kết quả đấu giá thắng
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Giá chốt</th>
+                                <th class="text-end">Hóa đơn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in won_auctions %}
+                            <tr>
+                                <td class="fw-bold text-primary">{{ result.auction.item.name }}</td>
+                                <td><span class="text-success fw-bold">{{ result.final_price}} VND</span></td>
+                                <td class="text-end">
+                                    <a href="#" class="btn btn-sm btn-outline-dark">Xem</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-muted text-center py-4">Bạn chưa thắng phiên đấu giá nào.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
