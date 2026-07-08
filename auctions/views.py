@@ -76,18 +76,20 @@ def create_auction_view(request):
 def home_view(request):
     categories = Category.objects.all()
     # Lấy tất cả các phiên đấu giá đang diễn ra
-    auctions = Auction.objects.filter(status='active')
+    auctions = Auction.objects.filter(status='active').order_by('end_time')
+    # Lấy các phiên đấu giá sắp tới
+    upcoming_auctions = Auction.objects.filter(start_time__gt=timezone.now()).order_by('start_time')
     # Lọc theo từ khóa (tìm trong tên item)
     query = request.GET.get('q')
-    if query:
-        auctions = auctions.filter(item__name__icontains=query)
-        
     # Lọc theo danh mục
     category_id = request.GET.get('category')
+    if query:
+        auctions = auctions.filter(item__name__icontains=query)
+        upcoming_auctions = upcoming_auctions.filter(item__name__icontains=query)
+
     if category_id:
         auctions = auctions.filter(item__category__id=category_id)
-    # Các phiên sắp tới (Pending hoặc đã tạo nhưng chưa đến giờ)
-    upcoming_auctions = Auction.objects.filter(start_time__gt=timezone.now())
+        upcoming_auctions = upcoming_auctions.filter(item__category__id=category_id)
     return render(request, 'home.html', {'auctions': auctions,
                                           'upcoming_auctions': upcoming_auctions,
                                           'categories': categories})
