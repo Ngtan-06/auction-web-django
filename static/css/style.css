@@ -4,7 +4,7 @@
     --accent-gold: #D4AF37;         /* Antique Gold (Vàng kim cao cấp) */
     --accent-gold-hover: #B4932F;
     --urgency-red: #DC2626;         /* Brick Red (Đỏ gạch báo giờ) */
-    --bg-page: #E2E8F0;
+    --bg-page: #53575b;
     --text-dark: #1E293B;
     --text-muted: #64748B;
     --white: #FFFFFF;
@@ -214,4 +214,134 @@ footer {
     color: var(--text-muted);
     font-size: 0.85rem;
     border-top: 1px solid #CBD5E1;
+}
+
+/* ==========================================================================
+   --- TRANG CHI TIẾT ĐẤU GIÁ (AUCTION DETAIL) ---
+   ========================================================================== */
+
+/* Khung bọc ảnh lớn sản phẩm */
+.premium-detail-img-box {
+    background-color: var(--white);
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+    overflow: hidden;
+}
+.premium-detail-img-box img {
+    width: 100%;
+    height: auto;
+    max-height: 450px;
+    object-fit: contain; /* Giữ nguyên tỉ lệ ảnh không bị bóp méo */
+    border-radius: 8px;
+}
+
+/* Khối thông tin đấu giá bên phải */
+.premium-bid-card {
+    background-color: var(--white);
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+/* Biển hiển thị giá hiện tại nổi bật */
+.premium-price-badge {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    color: var(--white);
+    padding: 1.25rem;
+    border-radius: 12px;
+    border-left: 5px solid var(--accent-gold);
+    margin-bottom: 1.5rem;
+}
+.premium-price-badge .price-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94A3B8;
+    display: block;
+    margin-bottom: 4px;
+}
+.premium-price-badge .price-amount {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+}
+
+/* Ô nhập số tiền và nút Đặt giá */
+.bid-input-group .form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 8px 0 0 8px;
+    border: 2px solid #E2E8F0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+.bid-input-group .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+.btn-bid-action {
+    background-color: var(--accent-gold);
+    color: var(--primary-color);
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border: 2px solid var(--accent-gold);
+    border-radius: 0 8px 8px 0;
+    transition: var(--transition-smooth);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.btn-bid-action:hover {
+    background-color: var(--accent-gold-hover);
+    border-color: var(--accent-gold-hover);
+    color: var(--primary-color);
+}
+.btn-bid-action:disabled {
+    background-color: #CBD5E1;
+    border-color: #CBD5E1;
+    color: #94A3B8;
+    cursor: not-allowed;
+}
+
+/* Bảng lịch sử đặt giá (Bid History) */
+.history-card {
+    background-color: var(--white);
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+.history-header {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+}
+.history-list-item {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #F1F5F9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition-smooth);
+}
+.history-list-item:last-child {
+    border-bottom: none;
+}
+
+/* Hiệu ứng đặc biệt cho người đang trả giá CAO NHẤT (Dẫn đầu) */
+.history-list-item.leader-item {
+    background-color: #FFFBEB; /* Nền vàng kem nhạt */
+    border-left: 4px solid var(--accent-gold);
+}
+.leader-badge {
+    background-color: var(--accent-gold);
+    color: var(--primary-color);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
 }
