@@ -11,10 +11,7 @@
         <hr>
 
         {% if auction.status == 'active' %}
-        <h3 class="text-muted small mb-0">Giá hiện tại</h3>
-        <div class="price-tag mb-3">
-            <span id="price-display">{{ auction.current_price }}</span> <small style="font-size: 1rem">VND</small>
-        </div>
+        <h3 class="text-primary">Giá hiện tại: <span id="price-display">{{ auction.current_price}}</span> VND</h3>
         <div id="bid-form-container">
             <form id="bid-form">
                 {% csrf_token %}

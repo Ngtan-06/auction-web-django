@@ -1,314 +1,207 @@
-/* --- BIẾN TOÀN CỤC (DESIGN SYSTEM) --- */
+/* --- DESIGN SYSTEM: PREMIUM & TRUST --- */
 :root {
-    --primary-dark: #0f172a;    /* Navy đậm */
-    --accent-gold: #eab308;     /* Vàng Gold - dành cho đấu giá */
-    --accent-gold-hover: #ca8a04;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --bg-light: #f8fafc;
-    --white: #ffffff;
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --border-radius: 12px;
+    --primary-color: #0F172A;       /* Midnight Blue (Xanh đen đậm) */
+    --accent-gold: #D4AF37;         /* Antique Gold (Vàng kim cao cấp) */
+    --accent-gold-hover: #B4932F;
+    --urgency-red: #DC2626;         /* Brick Red (Đỏ gạch báo giờ) */
+    --bg-page: #F8FAFC;             /* Off-white (Nền trang trắng kem) */
+    --text-dark: #1E293B;
+    --text-muted: #64748B;
+    --white: #FFFFFF;
+    --card-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
-    background-color: var(--bg-light);
-    color: var(--text-main);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
+    background-color: var(--bg-page);
+    color: var(--text-dark);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* --- HEADER & NAVBAR --- */
-.navbar {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(10px); /* Hiệu ứng kính mờ hiện đại */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 0.75rem 0;
+/* --- THEME THANH NAV BAR --- */
+.premium-navbar {
+    background-color: var(--primary-color) !important;
+    padding: 0.6rem 1.5rem;
+    border-bottom: 3px solid var(--accent-gold);
 }
-
-.navbar-brand img {
-    transition: transform 0.3s ease;
-}
-
-.navbar-brand:hover img {
-    transform: scale(1.1);
-}
-
-.nav-link {
+.premium-navbar .nav-link {
+    color: #CBD5E1 !important;
     font-weight: 500;
-    color: var(--primary-dark) !important;
-    transition: color 0.3s;
+    font-size: 0.9rem;
+    transition: var(--transition-smooth);
 }
-
-.nav-link:hover {
+.premium-navbar .nav-link:hover {
     color: var(--accent-gold) !important;
 }
 
-/* --- NÚT BẤM (BUTTONS) --- */
-.btn-primary {
-    background-color: var(--primary-dark);
-    border-color: var(--primary-dark);
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
+/* Ô tìm kiếm trên thanh điều hướng */
+.search-box {
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--white) !important;
+    font-size: 0.85rem;
+}
+.search-box:focus {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+.btn-search {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #CBD5E1;
+    font-size: 0.85rem;
+}
+.btn-search:hover {
+    background-color: var(--white);
+    color: var(--primary-color);
+}
+
+/* --- HỆ THỐNG NÚT BẤM BRAND --- */
+.btn-gold {
+    background-color: var(--accent-gold);
+    color: var(--primary-color) !important;
     font-weight: 600;
+    border: 1px solid var(--accent-gold);
+}
+.btn-gold:hover {
+    background-color: var(--accent-gold-hover);
+    border-color: var(--accent-gold-hover);
+}
+.btn-outline-gold {
+    background-color: transparent;
+    color: var(--accent-gold) !important;
+    border: 1px solid var(--accent-gold);
+    font-weight: 500;
+}
+.btn-outline-gold:hover {
+    background-color: var(--accent-gold);
+    color: var(--primary-color) !important;
+}
+.btn-logout {
+    background-color: rgba(220, 38, 38, 0.1);
+    color: #F87171 !important;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+.btn-logout:hover {
+    background-color: var(--urgency-red);
+    color: var(--white) !important;
 }
 
-.btn-primary:hover {
-    background-color: #1e293b;
-    border-color: #1e293b;
-}
-
-.btn-outline-primary {
-    color: var(--primary-dark);
-    border-color: var(--primary-dark);
-}
-
-.btn-outline-primary:hover {
-    background-color: var(--primary-dark);
-    color: var(--white);
-}
-
-/* --- CARD SẢN PHẨM (HOME PAGE) --- */
+/* --- CARD SẢN PHẨM SÀN ĐẤU GIÁ (`home.html`) --- */
 .uniform-card {
-    border: none;
-    border-radius: var(--border-radius);
-    transition: all 0.3s ease;
-    background: var(--white);
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background-color: var(--white);
+    transition: var(--transition-smooth);
     display: flex;
     flex-direction: column;
-}
-
-.uniform-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.img-container {
-    height: 220px;
     overflow: hidden;
-    border-top-left-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-    background-color: #f1f5f9;
+}
+.uniform-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    border-color: var(--accent-gold);
 }
 
+/* Container ảnh chống méo, ép tỉ lệ */
+.img-container {
+    width: 100%;
+    height: 220px;
+    background-color: #F1F5F9;
+    overflow: hidden;
+}
 .img-container img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Giúp ảnh không bị méo */
-    transition: transform 0.5s;
+    object-fit: cover;
+    transition: var(--transition-smooth);
 }
-
 .uniform-card:hover .img-container img {
-    transform: scale(1.1);
+    transform: scale(1.04);
 }
 
 .card-body-custom {
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     flex-grow: 1;
 }
-
-.card-title {
-    font-size: 1.1rem;
+.card-body-custom .card-title {
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.4rem;
+}
+.card-body-custom .card-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
 }
 
+/* Khu vực thông số đấu giá được bảo vệ size chữ */
 .card-footer-custom {
     margin-top: auto;
     padding-top: 1rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #F1F5F9;
+}
+.card-meta-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 0.85rem;
+}
+.card-price-block, .card-time-block {
+    display: flex;
+    flex-direction: column;
+}
+.card-price-label, .card-time-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+.card-time-label {
+    color: var(--urgency-red);
+    font-weight: 600;
+}
+.card-price-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.card-time-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dark);
 }
 
-/* --- CHI TIẾT ĐẤU GIÁ (AUCTION DETAIL) --- */
-.price-tag {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--accent-gold);
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
+/* Nút bấm hành động riêng cho Card sản phẩm */
+.btn-card-action {
+    display: block;
+    width: 100%;
+    padding: 0.55rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
 }
-
-#bid-button {
-    background: linear-gradient(135deg, var(--primary-dark) 0%, #1e293b 100%);
-    color: var(--accent-gold);
-    border: none;
-    padding: 1rem;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
-}
-
-#bid-button:disabled {
-    background: #e2e8f0;
-    color: #94a3b8;
-    box-shadow: none;
-}
-
-/* Lịch sử đặt giá */
-#bid-history .list-group-item {
-    border-left: none;
-    border-right: none;
-    padding: 1rem;
-    border-color: #f1f5f9;
-    transition: background 0.3s;
-}
-
-#bid-history .list-group-item:first-child {
-    background-color: #fffbeb; /* Highlight người mới nhất */
-    border-left: 4px solid var(--accent-gold);
-}
-
-/* --- DASHBOARD & TABLES --- */
-.table {
-    background: var(--white);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-}
-
-.table thead {
-    background-color: var(--primary-dark);
+.btn-card-action:hover {
+    background-color: var(--primary-color);
     color: var(--white);
 }
 
-.table th {
-    font-weight: 600;
-    border: none;
-    padding: 1rem;
-}
-
-/* --- LOGIN / REGISTER CARDS --- */
-section.vh-100 {
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
-}
-
-.card[style*="border-radius: 25px;"] {
-    border: none;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-}
-
-input.form-control {
-    padding: 0.75rem;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-}
-
-input.form-control:focus {
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
-}
-
-/* --- FOOTER --- */
+/* --- FOOTER ĐÁY TRANG --- */
 footer {
-    background: var(--white);
+    background-color: #E2E8F0;
     color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-/*-------------------------------------*/
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-.header{
-    height:80px;
-    display:flex;
-    align-items:center;
-    justify-content:space-around;
-    border-bottom:1px solid #ddd;
-}
-
-nav ul{
-    display:flex;
-    gap:30px;
-    list-style:none;
-}
-
-nav ul li{
-    cursor:pointer;
-    font-weight:600;
-}
-
-.login_but{
-    background:#c40000;
-    color:white;
-    border:none;
-    padding:12px 25px;
-    border-radius:5px;
-}
-
-.search{
-    width:50px;
-    height:50px;
-    border:1px solid red;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.product-card{
-    width:300px;
-    background:white;
-    border:1px solid #ddd;
-    border-radius:10px;
-    overflow:hidden;
-    transition:0.3s;
-}
-
-.product-card:hover{
-    box-shadow:0 4px 15px rgba(0,0,0,0.15);
-}
-
-.product-image{
-    position:relative;
-}
-
-.product-image img{
-    width:100%;
-    height:280px;
-    object-fit:cover;
-}
-
-.wishlist{
-    position:absolute;
-    top:10px;
-    right:10px;
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    border:1px solid #ccc;
-    background:white;
-    cursor:pointer;
-    font-size:20px;
-}
-
-.product-info{
-    padding:15px;
-}
-
-.time-left{
-    color:#e74c3c;
-    font-size:18px;
-    margin-bottom:10px;
-}
-
-.product-title{
-    color:#1f4b66;
-    text-decoration:underline;
-    font-size:20px;
-    display:block;
-    margin-bottom:15px;
-    line-height:1.5;
-}
-
-.price{
-    font-size:32px;
-    font-weight:bold;
+    font-size: 0.85rem;
+    border-top: 1px solid #CBD5E1;
 }

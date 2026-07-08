@@ -1,28 +1,33 @@
 {% extends 'base.html' %}
+
 {% block content %}
+
 {% if auctions %}
-    <h2 class="mb-4">Các phiên đấu giá đang diễn ra</h2>
+    <h3 class="mb-4 fw-bold" style="color: var(--primary-color);">Các phiên đấu giá đang diễn ra</h3>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-        <!-- Sử dụng cấu trúc Grid chuẩn của Bootstrap để tự co giãn dòng -->
         {% for auction in auctions %}
         <div class="col d-flex align-items-stretch">
             <div class="card shadow-sm w-100 uniform-card">
-                <!-- Bọc ảnh vào container cố định kích thước -->
                 <div class="img-container">
                     <img src="{{ auction.item.image_url }}" class="card-img-top" alt="{{ auction.item.name }}">
                 </div>
                 
                 <div class="card-body card-body-custom">
                     <h5 class="card-title text-truncate" title="{{ auction.item.name }}">{{ auction.item.name }}</h5>
-                    <p class="card-text text-muted small">{{ auction.item.description|truncatewords:10 }}</p>
+                    <p class="card-text">{{ auction.item.description|truncatewords:10 }}</p>
                     
-                    <!-- Khung thông tin và nút bấm được neo cố định dưới đáy -->
                     <div class="card-footer-custom w-100">
-                        <div class="price-tag d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-primary font-weight-bold">{{ auction.current_price}} VND</span>
-                            <small class="text-danger">Kết thúc: {{ auction.end_time|date:"d/m H:i" }}</small>
+                        <div class="card-meta-info">
+                            <div class="card-price-block">
+                                <span class="card-price-label">Giá hiện tại</span>
+                                <span class="card-price-value">{{ auction.current_price|floatformat:0 }} VND</span>
+                            </div>
+                            <div class="card-time-block text-end">
+                                <span class="card-time-label">Kết thúc</span>
+                                <span class="card-time-value">{{ auction.end_time|date:"d/m H:i" }}</span>
+                            </div>
                         </div>
-                        <a href="{% url 'auction_detail' auction.id %}" class="btn btn-outline-primary w-100">Tham gia đấu giá</a>
+                        <a href="{% url 'auction_detail' auction.id %}" class="btn-card-action">Tham gia đấu giá</a>
                     </div>
                 </div>
             </div>
@@ -36,24 +41,31 @@
 {% endif %}
 
 {% if upcoming_auctions %}
-    <h2 class="mb-4">Sắp đấu giá</h2>
+    <h3 class="mb-4 fw-bold" style="color: var(--primary-color);">Sắp đấu giá</h3>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {% for auction in upcoming_auctions %}
         <div class="col d-flex align-items-stretch">
             <div class="card shadow-sm w-100 uniform-card">
-                <!-- Bọc ảnh vào container cố định kích thước -->
                 <div class="img-container">
                     <img src="{{ auction.item.image_url }}" class="card-img-top" alt="{{ auction.item.name }}">
                 </div>
                 
                 <div class="card-body card-body-custom">
                     <h5 class="card-title text-truncate" title="{{ auction.item.name }}">{{ auction.item.name }}</h5>
-                    <p class="card-text text-muted small">{{ auction.item.description|truncatewords:10 }}</p>
+                    <p class="card-text">{{ auction.item.description|truncatewords:10 }}</p>
+                    
                     <div class="card-footer-custom w-100">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            Bắt đầu: <span class="text-primary">{{ auction.start_time|date:"d/m H:i" }}</span>
+                        <div class="card-meta-info">
+                            <div class="card-price-block">
+                                <span class="card-price-label">Trạng thái</span>
+                                <span class="card-price-value text-muted" style="font-size: 0.9rem;">Chờ mở sàn</span>
+                            </div>
+                            <div class="card-time-block text-end">
+                                <span class="card-time-label" style="color: var(--accent-gold);">Bắt đầu</span>
+                                <span class="card-time-value">{{ auction.start_time|date:"d/m H:i" }}</span>
+                            </div>
                         </div>
-                        <a href="{% url 'auction_detail' auction.id %}" class="btn btn-outline-primary w-100">Chi tiết sản phẩm</a>
+                        <a href="{% url 'auction_detail' auction.id %}" class="btn-card-action">Chi tiết sản phẩm</a>
                     </div>
                 </div>
             </div>
