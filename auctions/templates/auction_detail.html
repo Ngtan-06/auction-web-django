@@ -50,10 +50,12 @@
                         {% if user != auction.seller %}
                             <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}" class="mb-4">
                                 {% csrf_token %}
-                                <div class="input-group bid-input-group">
+                                <div class="input-group bid-input-group w-100">
                                     <button type="submit" id="bid-button" class="btn btn-bid-action" {% if auction.current_bidder == user %}disabled{% endif %}>
                                         {% if auction.current_bidder == user %}
-                                            Bạn đang giữ giá cao nhất
+                                            <div class="bid-status-banner is-leader" style="width: 100%; text-align: center; background-color: #E2E8F0; padding: 1rem; border-radius: 8px; font-weight: bold; color: #94A3B8;">
+                                                BẠN ĐANG GIỮ GIÁ CAO NHẤT
+                                            </div>
                                         {% else %}
                                             Đặt giá <span id="next-price-display">{{ auction.current_price|add:auction.bid_increment}}</span> VND
                                         {% endif %}
@@ -90,7 +92,7 @@
                         </div>
                     </div>
                     <div class="input-group bid-input-group">
-                        <button type="button" class="btn btn-bid-action">Bước giá {{ auction.bid_increment}} VND</button>
+                        <button type="button" class="btn btn-bid-action" disabled>Bước giá {{ auction.bid_increment}} VND</button>
                     </div>
                 {% else %}
                 <div class="premium-price-badge">
@@ -100,24 +102,13 @@
             </div>
             <div class="history-card mt-4">
                 <div class="history-header d-flex justify-content-between align-items-center">
-                    <span>Lịch sử đặt giá công khai</span>
+                    <span>Lịch sử đặt giá</span>
                     <span class="badge bg-white text-dark small px-2 py-1" style="font-size: 0.75rem;">Thời gian thực</span>
                 </div>
                 
                 <div class="list-group list-group-flush" id="bid-history">
                     {% for bid in bids|slice:":5" %}
-                        <div class="history-list-item {% if forloop.first %}leader-item{% endif %}">
-                            <div>
-                                <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ bid.bidder.username }}</span>
-                                {% if forloop.first %}
-                                    <span class="ms-2 leader-badge">Dẫn đầu</span>
-                                {% endif %}
-                                <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">{{ bid.timestamp|date:"H:i:s d/m/Y" }}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="fw-bold text-dark" style="font-size: 1.05rem;">{{ bid.amount|floatformat:0 }} VND</span>
-                            </div>
-                        </div>
+                        {% include 'partials/bid_item.html' with bid=bid is_highest=forloop.first %}
                     {% empty %}
                         <div class="p-4 text-center text-muted small" id="no-bids-msg">
                             Chưa có ai đặt giá cho sản phẩm này. Hãy là người đầu tiên!
