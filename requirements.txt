@@ -8,3 +8,4 @@ daphne
 Pillow
 channels_redis
 resend
+whitenoise
