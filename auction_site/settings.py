@@ -1,3 +1,15 @@
+import socket
+
+# --- SỬA LỖI [Errno 101] TRÊN RENDER: ÉP SOCKET DÙNG IPV4 ---
+old_getaddrinfo = socket.getaddrinfo
+
+def new_getaddrinfo(*args, **kwargs):
+    responses = old_getaddrinfo(*args, **kwargs)
+    # Chỉ giữ lại các địa chỉ IPv4 (AF_INET), loại bỏ IPv6 (AF_INET6)
+    return [r for r in responses if r[0] == socket.AF_INET]
+
+socket.getaddrinfo = new_getaddrinfo
+# -----------------------------------------------------------
 import os
 import dj_database_url
 from pathlib import Path
