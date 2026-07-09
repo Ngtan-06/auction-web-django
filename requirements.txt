@@ -1,11 +1,10 @@
 django
 gunicorn
-supabase
 python-dotenv
 psycopg2-binary
 dj-database-url
 channels
 daphne
 Pillow
-whitenoise
 channels_redis
+resend

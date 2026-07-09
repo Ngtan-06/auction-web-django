@@ -1,3 +1,4 @@
+import resend, os
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.db import transaction
@@ -69,43 +70,30 @@ def finalize_auction(auction):
 
     auction.save()
 
+resend.api_key = os.getenv("RESEND_API_KEY") # Thêm biến này vào Render Environment
+
 def process_pending_emails():
-    pending_results = AuctionResult.objects.filter(email_sent=False).select_related('winner', 'auction__item')[:1]
-    
+    pending_results = AuctionResult.objects.filter(email_sent=False).select_related('winner', 'auction__item')[:5]
     sent_count = 0
+    
     for result in pending_results:
         winner = result.winner
         auction = result.auction
         
         if winner.email:
-            subject = f"🎉 Chúc mừng! Bạn đã thắng đấu giá sản phẩm: {auction.item.name}"
-            html_message = f"""
-                <html>
-                    <body>
-                        <h2>Chúc mừng {winner.username}!</h2>
-                        <p>Bạn đã chiến thắng cuộc đấu giá cho sản phẩm <strong>{auction.item.name}</strong>.</p>
-                        <p>Giá chốt phiên: <strong>{result.final_price} VND</strong>.</p>
-                        <p>Vui lòng tiến hành thanh toán trong vòng 24 giờ để hoàn tất đơn hàng.</p>
-                    </body>
-                </html>
-            """
-            plain_message = strip_tags(html_message)
-            from_email = getattr(settings, 'DEFAULT_FROM_EMAIL')
-
             try:
-                # Gửi đồng bộ từng email một
-                send_mail(
-                    subject, 
-                    plain_message, 
-                    from_email, 
-                    [winner.email], 
-                    html_message=html_message, 
-                    fail_silently=False
-                )
-                # Đánh dấu đã gửi thành công
+                # Gửi email qua HTTP API của Resend (siêu nhanh < 0.5s, không lo timeout)
+                r = resend.Emails.send({
+                    "from": "tungoctan@dtu.edu.vn", # Tên người gửi mặc định
+                    "to": winner.email,
+                    "subject": f"🎉 Chúc mừng! Bạn đã thắng đấu giá: {auction.item.name}",
+                    "html": f"<p>Chúc mừng <strong>{winner.username}</strong>! Bạn đã thắng phiên đấu giá.</p>"
+                })
+                
                 result.email_sent = True
                 result.save()
                 sent_count += 1
+                print(f"✅ Đã gửi email tới {winner.email}", flush=True)
             except Exception as e:
                 print(f"❌ Lỗi gửi email cho {winner.email}: {e}", flush=True)
                 
