@@ -149,7 +149,7 @@ def cron_trigger_auctions_view(request):
     provided_token = request.GET.get('token')
     
     # Mã bí mật lưu ở biến môi trường Environment Variable (mặc định lấy chuỗi tạm nếu dev local)
-    secret_token = os.getenv('CRON_SECRET_TOKEN')
+    secret_token = os.getenv('CRON_SECRET_TOKEN_A')
 
     # Kiểm tra tính hợp lệ
     if not provided_token or provided_token != secret_token:
@@ -165,5 +165,15 @@ def cron_trigger_auctions_view(request):
     })
 
 def cron_send_emails(request):
+    provided_token = request.GET.get('token')
+    secret_token = os.getenv('CRON_SECRET_TOKEN_B')
+    
+    # Kiểm tra tính hợp lệ 
+    if not provided_token or provided_token != secret_token:
+        return JsonResponse({'success': False, 'message': 'Unauthorized access'}, status=403)
     sent_count = process_pending_emails()
-    return JsonResponse({"status": "success", "emails_sent": sent_count})
+    return JsonResponse({
+        'success': True,
+        'message': 'Gửi email thành công!',
+        'data': sent_count
+    })
