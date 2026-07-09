@@ -11,4 +11,5 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('create/', views.create_auction_view, name='create_auction'),
     path('api/cron/trigger-auctions/', views.cron_trigger_auctions_view, name='cron_trigger_auctions'),
+    path('api/cron/send-emails/', views.cron_send_emails, name='cron_send_emails'),
 ]

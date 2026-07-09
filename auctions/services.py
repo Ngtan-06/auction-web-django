@@ -1,5 +1,3 @@
-import threading
-
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.db import transaction
@@ -69,15 +67,24 @@ def finalize_auction(auction):
         auction.current_bidder = highest_bid.user
         auction.current_price = highest_bid.bid_amount
 
-        winner_email = highest_bid.user.email
-        if winner_email:
+    auction.save()
+
+def process_pending_emails():
+    pending_results = AuctionResult.objects.filter(email_sent=False).select_related('winner', 'auction__item')[:1]
+    
+    sent_count = 0
+    for result in pending_results:
+        winner = result.winner
+        auction = result.auction
+        
+        if winner.email:
             subject = f"🎉 Chúc mừng! Bạn đã thắng đấu giá sản phẩm: {auction.item.name}"
             html_message = f"""
                 <html>
                     <body>
-                        <h2>Chúc mừng {highest_bid.user.username}!</h2>
+                        <h2>Chúc mừng {winner.username}!</h2>
                         <p>Bạn đã chiến thắng cuộc đấu giá cho sản phẩm <strong>{auction.item.name}</strong>.</p>
-                        <p>Giá chốt phiên: <strong>{highest_bid.bid_amount} VND</strong>.</p>
+                        <p>Giá chốt phiên: <strong>{result.final_price} VND</strong>.</p>
                         <p>Vui lòng tiến hành thanh toán trong vòng 24 giờ để hoàn tất đơn hàng.</p>
                     </body>
                 </html>
@@ -85,29 +92,24 @@ def finalize_auction(auction):
             plain_message = strip_tags(html_message)
             from_email = getattr(settings, 'DEFAULT_FROM_EMAIL')
 
-            _send_email_async(
-                            subject, 
-                            plain_message, 
-                            from_email, 
-                            winner_email, 
-                            html_message
-                        )
-    auction.save()
-
-def _send_email_async(subject, plain_message, from_email, to_email, html_message):
-    try:
-        send_mail(
-            subject, 
-            plain_message, 
-            from_email, 
-            [to_email], 
-            html_message=html_message, 
-            fail_silently=False
-        )
-        print(f"✅ GỬI EMAIL THÀNH CÔNG TỚI: {to_email}", flush=True)
-    except Exception as e:
-        print(f"❌ GỬI EMAIL THẤT BẠI TỚI {to_email}. CỤ THỂ LỖI: {e}", flush=True)
-
+            try:
+                # Gửi đồng bộ từng email một
+                send_mail(
+                    subject, 
+                    plain_message, 
+                    from_email, 
+                    [winner.email], 
+                    html_message=html_message, 
+                    fail_silently=False
+                )
+                # Đánh dấu đã gửi thành công
+                result.email_sent = True
+                result.save()
+                sent_count += 1
+            except Exception as e:
+                print(f"❌ Lỗi gửi email cho {winner.email}: {e}", flush=True)
+                
+    return sent_count
 
 def check_and_update_auctions():
     now = timezone.now()

@@ -7,7 +7,7 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
-from .services import place_bid, finalize_auction, check_and_update_auctions
+from .services import place_bid, finalize_auction, check_and_update_auctions, process_pending_emails
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, AuctionCreateForm, ItemForm
 from .models import Auction, Category, Notification, AuctionResult
 
@@ -163,3 +163,7 @@ def cron_trigger_auctions_view(request):
         'message': 'Cập nhật các phiên đấu giá thành công!',
         'data': result
     })
+
+def cron_send_emails(request):
+    sent_count = process_pending_emails()
+    return JsonResponse({"status": "success", "emails_sent": sent_count})

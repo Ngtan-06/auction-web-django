@@ -60,6 +60,7 @@ class AuctionResult(models.Model):
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     final_price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    email_sent = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'auction_results'
