@@ -154,3 +154,14 @@ CSRF_TRUSTED_ORIGINS = [
     'https://auction-web-django-4.onrender.com',
     'https://*.onrender.com', # Cho phép tất cả các subdomain của render nếu cần
 ]
+
+# Cấu hình Email gửi đi
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# Khai báo Email mặc định gửi đi (lấy từ môi trường hoặc giá trị mặc định)
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
