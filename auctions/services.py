@@ -87,7 +87,12 @@ def process_pending_emails():
                     "from": "onboarding@resend.dev", # Tên người gửi mặc định
                     "to": winner.email,
                     "subject": f"🎉 Chúc mừng! Bạn đã thắng đấu giá: {auction.item.name}",
-                    "html": f"<p>Chúc mừng <strong>{winner.username}</strong>! Bạn đã thắng phiên đấu giá.</p>"
+                    "html": f"""
+                                <h2>Chúc mừng {winner.username}!</h2>
+                                <p>Bạn đã chiến thắng cuộc đấu giá cho sản phẩm <strong>{auction.title}</strong>.</p>
+                                <p>Giá chốt phiên: <strong>{auction.final_price} VND</strong>.</p>
+                                <p>Vui lòng tiến hành thanh toán trong vòng 24 giờ để hoàn tất đơn hàng.</p>
+                            """
                 })
                 
                 result.email_sent = True
