@@ -1,3 +1,5 @@
+import threading
+
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.db import transaction
@@ -44,7 +46,8 @@ def place_bid(user, auction):
 def finalize_auction(auction):
     if auction.status != 'active':
         return
-
+    
+    auction.status = 'ended'
     # 1. Tìm người đặt giá cao nhất
     highest_bid = auction.bids.order_by('-bid_amount', '-bid_time').first()
     
@@ -68,27 +71,39 @@ def finalize_auction(auction):
 
         winner_email = highest_bid.user.email
         if winner_email:
-            try:
-                subject = f"🎉 Chúc mừng! Bạn đã thắng đấu giá sản phẩm: {auction.item.name}"
-                html_message = f"""
-                    <html>
-                        <body>
-                            <h2>Chúc mừng {highest_bid.user.username}!</h2>
-                            <p>Bạn đã chiến thắng cuộc đấu giá cho sản phẩm <strong>{auction.item.name}</strong>.</p>
-                            <p>Giá chốt phiên: <strong>{highest_bid.bid_amount} VND</strong>.</p>
-                            <p>Vui lòng tiến hành thanh toán trong vòng 24 giờ để hoàn tất đơn hàng.</p>
-                        </body>
-                    </html>
-                """
-                plain_message = strip_tags(html_message)
-                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL')
-                to_email = highest_bid.user.email
+            subject = f"🎉 Chúc mừng! Bạn đã thắng đấu giá sản phẩm: {auction.item.name}"
+            html_message = f"""
+                <html>
+                    <body>
+                        <h2>Chúc mừng {highest_bid.user.username}!</h2>
+                        <p>Bạn đã chiến thắng cuộc đấu giá cho sản phẩm <strong>{auction.item.name}</strong>.</p>
+                        <p>Giá chốt phiên: <strong>{highest_bid.bid_amount} VND</strong>.</p>
+                        <p>Vui lòng tiến hành thanh toán trong vòng 24 giờ để hoàn tất đơn hàng.</p>
+                    </body>
+                </html>
+            """
+            plain_message = strip_tags(html_message)
+            from_email = getattr(settings, 'DEFAULT_FROM_EMAIL')
 
-                send_mail(subject, plain_message, from_email, [to_email], html_message=html_message, fail_silently=True)
-            except Exception as e:
-                print(f"Lỗi gửi email cho phiên {auction.id}: {e}")
-    auction.status = 'ended'
+            threading.Thread(
+                target=_send_email_async,
+                args=(subject, plain_message, from_email, winner_email, html_message),
+                daemon=True
+            ).start()
     auction.save()
+
+def _send_email_async(subject, plain_message, from_email, to_email, html_message):
+    try:
+        send_mail(
+            subject, 
+            plain_message, 
+            from_email, 
+            [to_email], 
+            html_message=html_message, 
+            fail_silently=True
+        )
+    except Exception as e:
+        print(f"Lỗi gửi email ngầm: {e}")
 
 
 def check_and_update_auctions():
