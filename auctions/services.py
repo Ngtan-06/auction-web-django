@@ -73,7 +73,7 @@ def finalize_auction(auction):
 resend.api_key = os.getenv("RESEND_API_KEY") # Thêm biến này vào Render Environment
 
 def process_pending_emails():
-    pending_results = AuctionResult.objects.filter(email_sent=False).select_related('winner', 'auction__item')[:5]
+    pending_results = AuctionResult.objects.filter(email_sent=False).select_related('winner', 'auction__item')[:1]
     sent_count = 0
     
     for result in pending_results:
@@ -84,7 +84,7 @@ def process_pending_emails():
             try:
                 # Gửi email qua HTTP API của Resend (siêu nhanh < 0.5s, không lo timeout)
                 r = resend.Emails.send({
-                    "from": "tungoctan@dtu.edu.vn", # Tên người gửi mặc định
+                    "from": "onboarding@resend.dev", # Tên người gửi mặc định
                     "to": winner.email,
                     "subject": f"🎉 Chúc mừng! Bạn đã thắng đấu giá: {auction.item.name}",
                     "html": f"<p>Chúc mừng <strong>{winner.username}</strong>! Bạn đã thắng phiên đấu giá.</p>"
