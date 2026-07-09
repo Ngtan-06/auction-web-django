@@ -85,11 +85,13 @@ def finalize_auction(auction):
             plain_message = strip_tags(html_message)
             from_email = getattr(settings, 'DEFAULT_FROM_EMAIL')
 
-            threading.Thread(
-                target=_send_email_async,
-                args=(subject, plain_message, from_email, winner_email, html_message),
-                daemon=True
-            ).start()
+            _send_email_async(
+                            subject, 
+                            plain_message, 
+                            from_email, 
+                            winner_email, 
+                            html_message
+                        )
     auction.save()
 
 def _send_email_async(subject, plain_message, from_email, to_email, html_message):
