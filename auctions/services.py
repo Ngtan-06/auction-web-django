@@ -90,7 +90,7 @@ def process_pending_emails():
                     "html": f"""
                                 <h2>Chúc mừng {winner.username}!</h2>
                                 <p>Bạn đã chiến thắng cuộc đấu giá cho sản phẩm <strong>{auction.item.name}</strong>.</p>
-                                <p>Giá chốt phiên: <strong>{auction.final_price} VND</strong>.</p>
+                                <p>Giá chốt phiên: <strong>{auction.current_price} VND</strong>.</p>
                                 <p>Vui lòng tiến hành thanh toán trong vòng 24 giờ để hoàn tất đơn hàng.</p>
                             """
                 })
