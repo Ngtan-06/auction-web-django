@@ -10,20 +10,23 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 def place_bid(user, auction):
-    next_bid = auction.current_price + auction.bid_increment
+    with transaction.atomic():
+        # Khóa bản ghi Auction trong DB, các request khác đến cùng lúc sẽ phải chờ (blocking)
+        auction = Auction.objects.select_for_update().get(id=auction.id)
+        next_bid = auction.current_price + auction.bid_increment
 
-    # 1. Lưu vào Database
-    new_bid = Bid.objects.create(
-        user=user,
-        auction=auction,
-        bid_amount=next_bid,
-        bid_time=timezone.now()
-    )
-    
-    # 2. Cập nhật Auction
-    auction.current_price = next_bid
-    auction.current_bidder = user
-    auction.save()
+        # 1. Lưu vào Database
+        new_bid = Bid.objects.create(
+            user=user,
+            auction=auction,
+            bid_amount=next_bid,
+            bid_time=timezone.now()
+        )
+        
+        # 2. Cập nhật Auction
+        auction.current_price = next_bid
+        auction.current_bidder = user
+        auction.save()
     
     # 3. Render đoạn HTML cho dòng lịch sử mới
     # Tạo một file nhỏ tên là 'bid_item.html' hoặc render trực tiếp string

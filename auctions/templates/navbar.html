@@ -18,14 +18,9 @@
     <div class="d-flex align-items-center gap-2">
         {% if user.is_authenticated %}
             <span class="text-white me-2 small">Xin chào, <strong>{{ user.username }}</strong></span>
-            {% if user.role == 'seller' %}
-                <a href="{% url 'create_auction' %}" class="btn btn-sm btn-gold">Đăng sản phẩm</a>
-            {% endif %}
+            <a href="{% url 'create_auction' %}" class="btn btn-sm btn-gold">Đăng sản phẩm</a>
             <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-gold">Dashboard</a>
             <a href="{% url 'logout' %}" class="btn btn-sm btn-logout">Đăng xuất</a>
-        {% else %}
-            <a class="btn btn-outline-gold btn-sm" href="{% url 'login' %}">Đăng nhập</a>
-            <a class="btn btn-gold btn-sm" href="{% url 'register' %}">Đăng ký</a>
         {% endif %}
     </div>
 </div>

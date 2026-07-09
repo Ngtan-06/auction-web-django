@@ -45,7 +45,6 @@ def logout_view(request):
     return redirect('login')
 
 @login_required
-@role_required(['seller'])
 def create_auction_view(request):
     if request.method == 'POST':
         item_form = ItemForm(request.POST, request.FILES)

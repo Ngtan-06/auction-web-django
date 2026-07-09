@@ -47,7 +47,7 @@
                         </div>
                     </div>
                     {% if user.is_authenticated %}
-                        {% if user != auction.seller %}
+                        {% if user != auction.item.seller %}
                             <form id="bid-form" method="POST" action="{% url 'place_bid' auction.id %}" class="mb-4">
                                 {% csrf_token %}
                                 <button type="submit" id="bid-button" class="btn btn-bid-action" {% if auction.current_bidder == user %}disabled{% endif %}>
