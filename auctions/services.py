@@ -102,8 +102,9 @@ def _send_email_async(subject, plain_message, from_email, to_email, html_message
             html_message=html_message, 
             fail_silently=False
         )
+        print(f"✅ GỬI EMAIL THÀNH CÔNG TỚI: {to_email}", flush=True)
     except Exception as e:
-        print(f"Lỗi gửi email ngầm: {e}")
+        print(f"❌ GỬI EMAIL THẤT BẠI TỚI {to_email}. CỤ THỂ LỖI: {e}", flush=True)
 
 
 def check_and_update_auctions():

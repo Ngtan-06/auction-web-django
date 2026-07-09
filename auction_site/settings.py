@@ -2,7 +2,6 @@ import os
 import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
-import whitenoise
 
 load_dotenv()
 
@@ -20,7 +19,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret")
 DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 ##############
 ALLOWED_HOSTS = ['*']
-
+LOGIN_URL = 'login'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
@@ -46,13 +45,19 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = 'auction_site.asgi.application'
 
+# Cấu hình CHANNEL_LAYERS tối ưu cho Upstash Redis
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [{
-                "address":os.getenv("REDIS_URL"),
-            }],
+            "hosts": [
+                {
+                    "address": os.getenv("REDIS_URL"),
+                    "health_check_interval": 15,  # Gửi PING mỗi 15 giây để giữ kết nối
+                    "socket_keepalive": True,     # Bật TCP keepalive
+                    "retry_on_timeout": True,     # Tự động kết nối lại khi bị timeout
+                }
+            ],
             "capacity": 1500,
             "expiry": 10,
         },
